@@ -1,0 +1,35 @@
+<?php
+$configOptions = array(
+    'surveys' => array(
+        'label' => 'Surveys Enabled?',
+        // 'input_type' => 'radio',                         // radio is default
+        // 'option_values' => array('On' => 1, 'Off' => 0), // default option values
+        // 'default_values' => 1,                           // on by default
+    ),
+    'modules' => array(
+        'label' => 'Active Modules',
+        'input_type' => 'multi_checkbox',
+        'option_values' => array('Foo' => 'foo', 'Bar' => 'bar'),
+        'default_values' => array('foo', 'bar'),
+    ),
+    'pagetitle' => array(
+        'label' => 'Page Title',
+        'input_type' => 'text',
+        'default_values' => 'My Site',
+    ),
+    'theme' => array(
+        'label' => 'Active Site Theme',
+        'input_type' => 'select',
+        'option_values' => array('Spring' => 'spring', 'Summer' => 'summer', 'Fall' => 'fall', 'Winter' => 'winter'),
+        'default_values' => 'summer',
+    ),
+);
+
+$settings = array(
+    'cache_dir' => dirname(dirname(__DIR__)) . '/data/cache',
+    'config_options' => $configOptions,
+);
+
+return array(
+    'cgmconfigadmin' => $settings,
+);
