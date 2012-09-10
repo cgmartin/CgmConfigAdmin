@@ -3,9 +3,9 @@ $configOptions = array(
     //
     // Settings
     //
-    'areEmailsEnabled',
-    'isSmsEnabled',
-    'copySmsToEmail',
+    'useCamelCase',
+    'use-dashes',
+    'use_underscores',
 
     //
     // Application Settings

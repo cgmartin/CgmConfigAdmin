@@ -133,7 +133,7 @@ class ConfigOption extends AbstractOptions
             $label = preg_replace_callback(
                 '/[\-_]([a-zA-Z0-9])/',
                 function ($matches) {
-                    return ' ' . strtoupper($matches[0]);
+                    return ' ' . strtoupper($matches[1]);
                 },
                 $label
             );
