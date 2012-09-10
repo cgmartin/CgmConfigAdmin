@@ -27,7 +27,7 @@ class Module implements
             ),
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
-            // if we're in a namespace deeper than one level we need to fix the \ in the path
+                    // if we're in a namespace deeper than one level we need to fix the \ in the path
                     __NAMESPACE__ => __DIR__ . '/src/' . str_replace('\\', '/' , __NAMESPACE__),
                 ),
             ),
@@ -56,7 +56,7 @@ class Module implements
 
                 'cgmconfigadmin_form' => function($sm) {
                     $options = $sm->get('cgmconfigadmin_module_options');
-                    $form = new Form\ConfigOptions($options->getConfigOptions());
+                    $form = new Form\ConfigOptions($options);
                     return $form;
                 },
             ),

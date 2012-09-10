@@ -1,33 +1,65 @@
 <?php
 $configOptions = array(
-    'surveys' => array(
-        'label' => 'Surveys Enabled?',
-        // 'input_type' => 'radio',                         // radio is default
-        // 'option_values' => array('On' => 1, 'Off' => 0), // default option values
-        // 'default_values' => 1,                           // on by default
+    //
+    // Settings
+    //
+    'areEmailsEnabled',
+    'isSmsEnabled',
+    'copySmsToEmail',
+
+    //
+    // Application Settings
+    //
+    array(
+        'id'            => 'activeModules',
+        'input_type'    => 'multicheckbox',
+        'value_options' => array(
+            'foo'  => 'Foo',
+            'bar'  => 'Bar',
+            'dev'  => 'Dev',
+            'null' => 'Null',
+        ),
+        'default_value' => array('foo', 'bar'),
+        'group'         => 'app',
     ),
-    'modules' => array(
-        'label' => 'Active Modules',
-        'input_type' => 'multi_checkbox',
-        'option_values' => array('Foo' => 'foo', 'Bar' => 'bar'),
-        'default_values' => array('foo', 'bar'),
+    array(
+        'id'            => 'pageTitle',
+        'input_type'    => 'text',
+        'default_value' => 'My Site',
+        'group'         => 'app',
     ),
-    'pagetitle' => array(
-        'label' => 'Page Title',
-        'input_type' => 'text',
-        'default_values' => 'My Site',
+
+    //
+    // Survey Settings
+    //
+    array(
+        'id'            => 'surveysEnabled',
+        'group'         => 'survey',
     ),
-    'theme' => array(
-        'label' => 'Active Site Theme',
-        'input_type' => 'select',
-        'option_values' => array('Spring' => 'spring', 'Summer' => 'summer', 'Fall' => 'fall', 'Winter' => 'winter'),
-        'default_values' => 'summer',
+    array(
+        'id'            => 'surveyTheme',
+        'label'         => 'Active Survey Theme',
+        'input_type'    => 'select',
+        'value_options' => array(
+            'spring' => 'Spring',
+            'summer' => 'Summer',
+            'fall'   => 'Fall',
+            'Winter' => 'winter'
+        ),
+        'default_value' => 'summer',
+        'group'         => 'survey',
     ),
 );
 
+$configGroups = array(
+    'app'    => 'Application Settings',
+    'survey' => 'Survey Settings',
+);
+
 $settings = array(
-    'cache_dir' => dirname(dirname(__DIR__)) . '/data/cache',
+    'cache_dir'      => dirname(dirname(__DIR__)) . '/data/cache',
     'config_options' => $configOptions,
+    'config_groups'  => $configGroups,
 );
 
 return array(

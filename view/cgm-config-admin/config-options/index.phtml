@@ -1,3 +1,44 @@
-<strong>Module:</strong>        CgmConfigAdmin &raquo;
-<strong>Controller:</strong>    Admin &raquo;
-<strong>Action:</strong>        index
+<h1>Configuration Admin</h1>
+
+<div class="accordian">
+<?php
+echo $this->form()->openTag($this->form);
+echo $this->formHidden($this->form->get('csrf'));
+foreach ($this->form as $fieldset) {
+    if (! $fieldset instanceof Zend\Form\FieldsetInterface) {
+        continue;
+    }
+    if ($this->form->getNumFieldsets() > 1) {
+    ?>
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a href="#" class="accordion-toggle" data-toggle="collapse"
+                ><?php echo $this->escapeHtml($fieldset->getLabel()) ?></a>
+        </div>
+        <div class="accordion-body collapse in"><div class="accordion-inner">
+        <?php
+    }
+    foreach ($fieldset as $element) {
+        ?><div class="control-group"><?
+        echo $this->formLabel($element->setLabelAttributes(array('class' => 'control-label')));
+        ?><div class="controls"><?php
+        $labelAttributes = array();
+        if ($element instanceof Zend\Form\Element\Radio) {
+            $labelAttributes = array('class' => 'radio inline');
+        } elseif ($element instanceof Zend\Form\Element\MultiCheckbox) {
+            $labelAttributes = array('class' => 'checkbox inline');
+        }
+        echo $this->formElement($element->setLabelAttributes($labelAttributes));
+        echo $this->formElementErrors($element);
+        ?></div></div><?
+    }
+    if ($this->form->getNumFieldsets() > 1) {
+    ?>
+        </div></div>
+    </div>
+    <?php
+    }
+}
+echo $this->form()->closeTag();
+?>
+</div>

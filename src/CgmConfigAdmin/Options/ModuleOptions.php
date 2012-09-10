@@ -29,6 +29,11 @@ class ModuleOptions extends AbstractOptions
     protected $configOptions = array();
 
     /**
+     * @var array
+     */
+    protected $configGroups = array();
+
+    /**
      * @param  string $cacheDir
      * @return ModuleOptions
      */
@@ -52,17 +57,56 @@ class ModuleOptions extends AbstractOptions
      */
     public function setConfigOptions($configOptions)
     {
+        foreach ($configOptions as $k => $configOption) {
+            if (! $configOption instanceof ConfigOption) {
+                $configOptions[$k] = new ConfigOption($configOption);
+            }
+        }
         $this->configOptions = $configOptions;
         return $this;
     }
 
     /**
-     * get form CAPTCHA options
-     *
-     * @return array
+     * @return array of ConfigOption
      */
     public function getConfigOptions()
     {
         return $this->configOptions;
+    }
+
+    /**
+     * @param  array $configGroups
+     * @return ModuleOptions
+     */
+    public function setConfigGroups($configGroups)
+    {
+        $this->configGroups = $configGroups;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfigGroups()
+    {
+        return $this->configGroups;
+    }
+
+    /**
+     * Cast to array
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        $array = parent::toArray();
+        if (!empty($array['config_options'])) {
+            foreach ($array['config_options'] as $k => $configOption) {
+                if ($configOption instanceof AbstractOptions) {
+                    $array['config_options'][$k] = $configOption->toArray();
+                }
+            }
+        }
+        return $array;
     }
 }
