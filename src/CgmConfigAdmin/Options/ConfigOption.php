@@ -75,15 +75,33 @@ class ConfigOption extends AbstractOptions
     }
 
     /**
-     * @param null|array $options
+     * @param string                $id
+     * @param null|int|string|array $options
      */
-    public function __construct($options = null)
+    public function __construct($id, $options = null)
     {
-        if (is_string($options)) {
-            $this->setId($options);
+        $this->setId($id);
+        if (is_bool($options)) {
+            $this->setInputType('radio');
+            $this->setDefaultValue(($options) ? '1' : '');
+        } elseif (is_string($options)) {
+            $this->setInputType('text');
+            $this->setDefaultValue($options);
+        } elseif (is_array($options) && !$this->isAssocArray($options)) {
+            $this->setInputType('select');
+            $this->setValueOptions($options);
         } else {
             parent::__construct($options);
         }
+    }
+
+    /**
+     * @param $arr
+     * @return bool
+     */
+    protected function isAssocArray($arr)
+    {
+        return (bool)count(array_filter(array_keys($arr), 'is_string'));
     }
 
     /**
@@ -230,11 +248,23 @@ class ConfigOption extends AbstractOptions
         $elementSpec['name'] = $this->getId();
         $elementSpec['options']['label'] = $this->getLabel();
 
+        // Default Value
         if (null !== ($defaultValue = $this->getDefaultValue())) {
             $elementSpec['attributes']['value'] = $defaultValue;
         }
+
+        // Value Options
         if (null !== ($valueOptions = $this->getValueOptions())) {
+            if (!$this->isAssocArray($valueOptions)) {
+                $valueOptions = array_combine($valueOptions, $valueOptions);
+            }
             $elementSpec['options']['value_options'] = $valueOptions;
+
+            if (null === $defaultValue) {
+                reset($valueOptions);
+                $elementSpec['attributes']['value'] = key($valueOptions);
+            }
+
         } elseif ('radio' === $type) {
             $elementSpec['options']['value_options'] = array(
                 '1' => 'Yes', '' => 'No',

@@ -26,4 +26,10 @@ return array(
             'CgmConfigAdmin' => __DIR__ . '/../view',
         ),
     ),
+    'view_helpers' => array(
+        'invokables' => array(
+            'cgmconfigadminaccordionform' => 'CgmConfigAdmin\View\Helper\CgmConfigAdminAccordionForm',
+            'cgmconfigadminfieldsetform'  => 'CgmConfigAdmin\View\Helper\CgmConfigAdminFieldsetForm',
+        ),
+    ),
 );

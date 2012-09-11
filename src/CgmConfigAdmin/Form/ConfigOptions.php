@@ -13,6 +13,7 @@ use ZfcBase\Form\ProvidesEventsForm;
 use CgmConfigAdmin\Options\ModuleOptions;
 use Zend\Form\Fieldset;
 use Zend\Form\Element\Csrf as CsrfElement;
+use Zend\Form\Element\Button as ButtonElement;
 
 class ConfigOptions extends ProvidesEventsForm
 {
@@ -68,6 +69,24 @@ class ConfigOptions extends ProvidesEventsForm
         $csrf = new CsrfElement('csrf');
         $csrf->setCsrfValidatorOptions(array('timeout' => null));
         $this->add($csrf);
+
+        $resetBtn = new ButtonElement('resetBtn');
+        $resetBtn
+            ->setLabel('Reset')
+            ->setAttribute('type', 'submit');
+        $this->add($resetBtn);
+
+        $saveBtn = new ButtonElement('saveBtn');
+        $saveBtn
+            ->setLabel('Save')
+            ->setAttribute('type', 'submit');
+        $this->add($saveBtn);
+
+        $previewBtn = new ButtonElement('previewBtn');
+        $previewBtn
+            ->setLabel('Preview')
+            ->setAttribute('type', 'submit');
+        $this->add($previewBtn);
     }
 
     /**

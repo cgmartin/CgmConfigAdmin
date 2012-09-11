@@ -1,59 +1,69 @@
 <?php
 $configOptions = array(
-    //
-    // Settings
-    //
-    'useCamelCase',
-    'use-dashes',
-    'use_underscores',
 
-    //
-    // Application Settings
-    //
-    array(
-        'id'            => 'activeModules',
-        'input_type'    => 'multicheckbox',
-        'value_options' => array(
-            'foo'  => 'Foo',
-            'bar'  => 'Bar',
-            'dev'  => 'Dev',
-            'null' => 'Null',
-        ),
-        'default_value' => array('foo', 'bar'),
-        'group'         => 'app',
-    ),
-    array(
-        'id'            => 'pageTitle',
-        'input_type'    => 'text',
-        'default_value' => 'My Site',
-        'group'         => 'app',
+    'group1' => array(
+        //
+        // Simple Options
+        //
+        // Key will be converted to a label automatically
+        //
+        'simpleOption'    => true,
+        'or-use-dashes'   => false,
+        'use_underscores' => true,
+        'simpleText'      => 'Some text',
+        'simpleSelect'    => array('Foo', 'Bar', 'Dev', 'Null'),
     ),
 
-    //
-    // Survey Settings
-    //
-    array(
-        'id'            => 'surveysEnabled',
-        'group'         => 'survey',
-    ),
-    array(
-        'id'            => 'surveyTheme',
-        'label'         => 'Active Survey Theme',
-        'input_type'    => 'select',
-        'value_options' => array(
-            'spring' => 'Spring',
-            'summer' => 'Summer',
-            'fall'   => 'Fall',
-            'Winter' => 'winter'
+    'group2' => array(
+        //
+        // Complex Options examples
+        //
+        'radioOption' => array(
+            'label'         => 'Radio Option',
+            'default_value' => false,
         ),
-        'default_value' => 'summer',
-        'group'         => 'survey',
+
+        'selectOption' => array(
+            'label'         => 'Select Option',
+            'input_type'    => 'select',
+            'value_options' => array(
+                'spring' => 'Spring',
+                'summer' => 'Summer',
+                'fall'   => 'Fall',
+                'Winter' => 'winter'
+            ),
+            'default_value' => 'summer',
+        ),
+    ),
+
+    'group3' => array(
+        //
+        // Complex Options examples
+        //
+        'multiCheckboxOption' => array(
+            'input_type'    => 'multicheckbox',
+            'label'         => 'MultiCheckbox Option',
+            'value_options' => array(
+                'foo'  => 'Foo',
+                'bar'  => 'Bar',
+                'dev'  => 'Dev',
+                'null' => 'Null',
+            ),
+            'default_value' => array('foo', 'bar'),
+        ),
+
+        'textOption' => array(
+            'input_type'    => 'text',
+            'label'         => 'Text Option',
+            'default_value' => 'My Site',
+        ),
     ),
 );
 
 $configGroups = array(
-    'app'    => 'Application Settings',
-    'survey' => 'Survey Settings',
+    'group1' => 'Settings Group 1',
+    'group2' => 'Settings Group 2',
+    'group3' => 'Settings Group 3',
 );
 
 $settings = array(
