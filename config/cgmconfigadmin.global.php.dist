@@ -1,16 +1,21 @@
 <?php
 $configOptions = array(
 
+    //
+    // WARNING: All Option Keys must be unique, no matter their grouping
+    //
+
     'group1' => array(
         //
         // Simple Options
         //
-        // Key will be converted to a label automatically
+        // Key will be automatically converted to a label
         //
-        'simpleOption'    => true,
-        'or-use-dashes'   => false,
-        'use_underscores' => true,
+        'useCamelCase'    => true,
+        'or-dashes'       => false,
+        'or_underscores'  => true,
         'simpleText'      => 'Some text',
+        'simpleNumber'    => 50,
         'simpleSelect'    => array('Foo', 'Bar', 'Dev', 'Null'),
     ),
 
@@ -18,38 +23,10 @@ $configOptions = array(
         //
         // Complex Options examples
         //
-        'radioOption' => array(
-            'label'         => 'Radio Option',
+        'boolOption' => array(
+            'label'         => 'Boolean Option',
+            'value_options' => array('1' => 'True', '' => 'False'),
             'default_value' => false,
-        ),
-
-        'selectOption' => array(
-            'label'         => 'Select Option',
-            'input_type'    => 'select',
-            'value_options' => array(
-                'spring' => 'Spring',
-                'summer' => 'Summer',
-                'fall'   => 'Fall',
-                'Winter' => 'winter'
-            ),
-            'default_value' => 'summer',
-        ),
-    ),
-
-    'group3' => array(
-        //
-        // Complex Options examples
-        //
-        'multiCheckboxOption' => array(
-            'input_type'    => 'multicheckbox',
-            'label'         => 'MultiCheckbox Option',
-            'value_options' => array(
-                'foo'  => 'Foo',
-                'bar'  => 'Bar',
-                'dev'  => 'Dev',
-                'null' => 'Null',
-            ),
-            'default_value' => array('foo', 'bar'),
         ),
 
         'textOption' => array(
@@ -57,13 +34,45 @@ $configOptions = array(
             'label'         => 'Text Option',
             'default_value' => 'My Site',
         ),
+
+        'numberOption' => array(
+            'input_type'    => 'number',
+            'label'         => 'Number Option',
+            'default_value' => 10,
+        ),
+    ),
+
+    'group3' => array(
+        //
+        // Complex Multi-Options examples
+        //
+        'multiCheckboxOption' => array(
+            'input_type'    => 'multicheckbox',
+            'label'         => 'MultiCheckbox Option',
+            'value_options' => array('Foo', 'Bar', 'Dev', 'Null'),
+            'default_value' => array('Bar', 'Dev'),
+        ),
+
+        'radioOption' => array(
+            'label'         => 'Radio Option',
+            'input_type'    => 'radio',
+            'value_options' => array('Foo', 'Bar', 'Dev', 'Null'),
+            'default_value' => 'Bar',
+        ),
+
+        'selectOption' => array(
+            'label'         => 'Select Option',
+            'input_type'    => 'select',
+            'value_options' => array('Spring', 'Summer', 'Fall', 'Winter'),
+            'default_value' => 'Fall',
+        ),
     ),
 );
 
 $configGroups = array(
-    'group1' => 'Settings Group 1',
-    'group2' => 'Settings Group 2',
-    'group3' => 'Settings Group 3',
+    'group1' => 'Simple Options',
+    'group2' => 'Complex Options',
+    'group3' => 'Multi Options',
 );
 
 $settings = array(

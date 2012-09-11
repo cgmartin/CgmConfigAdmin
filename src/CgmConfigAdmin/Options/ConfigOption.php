@@ -18,6 +18,7 @@ class ConfigOption extends AbstractOptions
         'select'        => 'Zend\Form\Element\Select',
         'multicheckbox' => 'Zend\Form\Element\MultiCheckbox',
         'text'          => 'Zend\Form\Element\Text',
+        'number'        => 'Zend\Form\Element\Number',
     );
 
     /**
@@ -84,6 +85,9 @@ class ConfigOption extends AbstractOptions
         if (is_bool($options)) {
             $this->setInputType('radio');
             $this->setDefaultValue(($options) ? '1' : '');
+        } elseif (is_numeric($options)) {
+            $this->setInputType('number');
+            $this->setDefaultValue($options);
         } elseif (is_string($options)) {
             $this->setInputType('text');
             $this->setDefaultValue($options);
