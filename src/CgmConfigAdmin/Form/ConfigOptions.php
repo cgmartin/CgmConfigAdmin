@@ -11,6 +11,7 @@ namespace CgmConfigAdmin\Form;
 
 use ZfcBase\Form\ProvidesEventsForm;
 use CgmConfigAdmin\Options\ModuleOptions;
+use Zend\InputFilter\InputFilter;
 use Zend\Form\Fieldset;
 use Zend\Form\Element\Csrf as CsrfElement;
 use Zend\Form\Element\Button as ButtonElement;
@@ -32,7 +33,9 @@ class ConfigOptions extends ProvidesEventsForm
 
         $this->setAttribute('class', 'form-horizontal');
 
-        $fieldsets = array();
+        $formInputFilter = new InputFilter();
+        $fieldsets       = array();
+        $inputFilters    = array();
 
         // Add default fieldset for elements without a group
         $defaultFieldset = new Fieldset('default');
@@ -44,10 +47,14 @@ class ConfigOptions extends ProvidesEventsForm
             $fieldset = new Fieldset($groupKey);
             $fieldset->setLabel($groupLabel);
             $fieldsets[$groupKey] = $fieldset;
+            $inputFilters[$groupKey] = array(
+                'type' => 'Zend\InputFilter\InputFilter',
+            );
         }
 
         // Add Elements to fieldsets
         foreach ($options->getConfigOptions() as $configOption) {
+            $configOption->prepareForForm();
             $group = $configOption->getGroup();
             if (!array_key_exists($group, $fieldsets)) {
                 throw new \UnexpectedValueException(
@@ -55,14 +62,15 @@ class ConfigOptions extends ProvidesEventsForm
                 );
             }
             $fieldsets[$group]->add($configOption->createFormElementSpec());
-            $ele = $fieldsets[$group]->get($configOption->getId());
+            $inputFilters[$group][$configOption->getId()] = $configOption->createInputFilterSpec();
         }
 
-        // Add fieldsets to form
+        // Add fieldsets and inputfilters to form
         foreach ($fieldsets as $key => $fieldset) {
             if ($fieldset->count() > 0) {
                 $this->add($fieldset);
                 $this->numFieldsets++;
+                $formInputFilter->add($inputFilters[$key], $key);
             }
         }
 
@@ -87,6 +95,8 @@ class ConfigOptions extends ProvidesEventsForm
             ->setLabel('Preview')
             ->setAttribute('type', 'submit');
         $this->add($previewBtn);
+
+        $this->setInputFilter($formInputFilter);
     }
 
     /**

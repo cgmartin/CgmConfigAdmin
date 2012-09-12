@@ -43,7 +43,7 @@ class Module implements
     {
         return array(
             'invokables' => array(
-                'cgmconfigadmin_service' => 'Service\ConfigAdmin',
+                'cgmconfigadmin_service' => 'CgmConfigAdmin\Service\ConfigAdmin',
             ),
 
             'factories' => array(
@@ -59,6 +59,7 @@ class Module implements
                     $form = new Form\ConfigOptions($options);
                     return $form;
                 },
+
             ),
         );
     }

@@ -11,6 +11,7 @@ namespace CgmConfigAdmin\View\Helper;
 
 use CgmConfigAdmin\Form\ConfigOptions as ConfigOptionsForm;
 use Zend\View\Helper\AbstractHelper;
+use Zend\InputFilter\InputFilter;
 use Zend\Form\FieldsetInterface;
 use Zend\Form\Element\Radio as RadioElement;
 use Zend\Form\Element\MultiCheckbox as MultiCheckboxElement;
@@ -32,6 +33,7 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
 
         $output .= $formHelper()->openTag($form);
         $output .= $elementHelper($form->get('csrf'));
+        $output .= $errorsHelper($form->get('csrf'));
 
         foreach ($form as $fieldset) {
             if (! $fieldset instanceof FieldsetInterface) {

@@ -11,6 +11,7 @@ namespace CgmConfigAdmin\Controller;
 
 use Zend\Form\Form;
 use Zend\Mvc\Controller\AbstractActionController;
+use CgmConfigAdmin\Service\ConfigAdmin as ConfigAdminService;
 
 class ConfigOptionsController extends AbstractActionController
 {
@@ -24,15 +25,30 @@ class ConfigOptionsController extends AbstractActionController
      */
     protected $configOptionsForm;
 
+    /**
+     * Index Action
+     *
+     * Process the Config Options form
+     *
+     * @return array
+     */
     public function indexAction()
     {
-        $form = $this->getConfigOptionsForm();
+        $service = $this->getConfigAdminService();
 
+        if ($this->request->isPost()) {
+            if ($service->saveConfigValues($this->request->getPost())) {
+                // Success!
+            }
+        }
         return array(
-            'form' => $form,
+            'form' => $service->getConfigOptionsForm(),
         );
     }
 
+    /**
+     * @return ConfigAdminService
+     */
     public function getConfigAdminService()
     {
         if (!$this->configAdminService) {
@@ -41,22 +57,15 @@ class ConfigOptionsController extends AbstractActionController
         return $this->configAdminService;
     }
 
+    /**
+     * @param  ConfigAdminService $service
+     * @return ConfigOptionsController
+     */
     public function setConfigAdminService(ConfigAdminService $service)
     {
         $this->configAdminService = $service;
         return $this;
     }
 
-    public function getConfigOptionsForm()
-    {
-        if (!$this->configOptionsForm) {
-            $this->setConfigOptionsForm($this->getServiceLocator()->get('cgmconfigadmin_form'));
-        }
-        return $this->configOptionsForm;
-    }
 
-    public function setConfigOptionsForm(Form $form)
-    {
-        $this->configOptionsForm = $form;
-    }
 }

@@ -9,8 +9,12 @@
 namespace CgmConfigAdmin\Service;
 
 use CgmConfigAdmin\Options\ModuleOptions;
+use CgmConfigAdmin\Form\ConfigOptions as ConfigOptionsForm;
+use ZfcBase\EventManager\EventProvider;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\ServiceManager\ServiceManager;
+use Zend\Form\Form;
+
 
 class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
 {
@@ -20,13 +24,32 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     protected $serviceManager;
 
     /**
+     * Form
+     */
+    protected $configOptionsForm;
+
+    /**
      * @var ModuleOptions
      */
     protected $options;
 
+    /**
+     * @param  $config array()
+     * @return bool
+     */
     public function saveConfigValues($config)
     {
-        // var_export :)
+        //\Zend\Debug\Debug::dump($config);
+        $form = $this->getConfigOptionsForm();
+        $form->setData($config);
+        if (!$form->isValid()) {
+            return false;
+        }
+
+        $config = $form->getData();
+        //\Zend\Debug\Debug::dump($config);
+
+        return true;
     }
 
     /**
@@ -72,6 +95,27 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     public function setServiceManager(ServiceManager $serviceManager)
     {
         $this->serviceManager = $serviceManager;
+        return $this;
+    }
+
+    /**
+     * @return Form
+     */
+    public function getConfigOptionsForm()
+    {
+        if (!$this->configOptionsForm) {
+            $this->setConfigOptionsForm($this->getServiceManager()->get('cgmconfigadmin_form'));
+        }
+        return $this->configOptionsForm;
+    }
+
+    /**
+     * @param  Form $form
+     * @return ConfigAdmin
+     */
+    public function setConfigOptionsForm(Form $form)
+    {
+        $this->configOptionsForm = $form;
         return $this;
     }
 }

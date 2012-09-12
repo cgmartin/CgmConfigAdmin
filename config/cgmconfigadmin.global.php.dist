@@ -1,8 +1,16 @@
 <?php
+//
+// Config Groupings
+$configGroups = array(
+    'group1' => 'Simple Options',
+    'group2' => 'Complex Options',
+    'group3' => 'Multi Options',
+);
+
 $configOptions = array(
 
     //
-    // WARNING: All Option Keys must be unique, no matter their grouping
+    // WARNING: All Option Ids (keys) must be unique, no matter their grouping
     //
 
     'group1' => array(
@@ -69,11 +77,7 @@ $configOptions = array(
     ),
 );
 
-$configGroups = array(
-    'group1' => 'Simple Options',
-    'group2' => 'Complex Options',
-    'group3' => 'Multi Options',
-);
+
 
 $settings = array(
     'cache_dir'      => dirname(dirname(__DIR__)) . '/data/cache',

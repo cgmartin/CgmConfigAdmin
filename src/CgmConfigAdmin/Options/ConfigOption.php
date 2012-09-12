@@ -10,6 +10,9 @@ namespace CgmConfigAdmin\Options;
 
 use Zend\Stdlib\AbstractOptions;
 use Zend\Form\Factory as FormFactory;
+use Zend\Validator\Explode as ExplodeValidator;
+use Zend\Validator\InArray as InArrayValidator;
+use Zend\Validator\ValidatorPluginManager;
 
 class ConfigOption extends AbstractOptions
 {
@@ -56,6 +59,20 @@ class ConfigOption extends AbstractOptions
      */
     protected $group = 'default';
 
+    /**
+     * @var InArrayValidator
+     */
+    protected $inArrayValidator;
+
+    /**
+     * @var ExplodeValidator
+     */
+    protected $explodeValidator;
+
+    /**
+     * @var ValidatorPluginManager
+     */
+    protected $validatorPluginManager;
 
     /**
      * @static
@@ -237,6 +254,38 @@ class ConfigOption extends AbstractOptions
     }
 
     /**
+     * Prepare default values for form element and input factories
+     *
+     * @return ConfigOption
+     */
+    public function prepareForForm()
+    {
+        $type         = $this->getInputType();
+        $defaultValue = $this->getDefaultValue();
+        if (null !== ($valueOptions = $this->getValueOptions())) {
+            if (!$this->isAssocArray($valueOptions)) {
+                $valueOptions = array_combine($valueOptions, $valueOptions);
+                $this->setValueOptions($valueOptions);
+            }
+            if (null === $defaultValue) {
+                reset($valueOptions);
+                $defaultValue = key($valueOptions);
+                $this->setDefaultValue($defaultValue);
+            }
+        } elseif ('radio' === $type) {
+            $valueOptions = array(
+                '1' => 'Yes', '' => 'No',
+            );
+            $this->setValueOptions($valueOptions);
+            if (null === $defaultValue) {
+                $defaultValue = '';
+                $this->setDefaultValue($defaultValue);
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Create a form element spec from internal data
      *
      * @return array
@@ -249,7 +298,7 @@ class ConfigOption extends AbstractOptions
         $elementSpec['type'] = (array_key_exists($type, self::$elementMappings))
             ? self::$elementMappings[$type] : $type;
 
-        $elementSpec['name'] = $this->getId();
+        $elementSpec['name']             = $this->getId();
         $elementSpec['options']['label'] = $this->getLabel();
 
         // Default Value
@@ -259,25 +308,143 @@ class ConfigOption extends AbstractOptions
 
         // Value Options
         if (null !== ($valueOptions = $this->getValueOptions())) {
-            if (!$this->isAssocArray($valueOptions)) {
-                $valueOptions = array_combine($valueOptions, $valueOptions);
-            }
             $elementSpec['options']['value_options'] = $valueOptions;
-
-            if (null === $defaultValue) {
-                reset($valueOptions);
-                $elementSpec['attributes']['value'] = key($valueOptions);
-            }
-
-        } elseif ('radio' === $type) {
-            $elementSpec['options']['value_options'] = array(
-                '1' => 'Yes', '' => 'No',
-            );
-            if (null === $defaultValue) {
-                $elementSpec['attributes']['value'] = '';
-            }
         }
 
         return $elementSpec;
     }
+
+    /**
+     * Create an input filter spec from internal data
+     *
+     * @return array
+     */
+    public function createInputFilterSpec()
+    {
+        $inputSpec = array();
+
+        $type = $this->getInputType();
+
+        $inputSpec['name']        = $this->getId();
+        $inputSpec['required']    = false;
+        $inputSpec['allow_empty'] = true;
+
+        $validators = array();
+        $filters    = array();
+        switch ($type) {
+            case 'radio':
+            case 'select':
+                $validators[] = $this->getInArrayValidator(false);
+                break;
+            case 'multicheckbox':
+                $validators[] = $this->getExplodeValidator(true);
+                break;
+            //case 'text':
+            case 'number':
+                $filters[]    = array('name' => 'Zend\Filter\StringTrim');
+                $validators[] = array(
+                    'name'    => 'float',
+                    'options' => array('locale' => 'en_US'),
+                );
+            break;
+        }
+        if (!empty($filters)) {
+            $inputSpec['filters'] = $filters;
+        }
+        if (!empty($validators)) {
+            $inputSpec['validators'] = $validators;
+        }
+
+        return $inputSpec;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getValueOptionValues($includeEmpty = false)
+    {
+        $values = array();
+        if ($includeEmpty) {
+            $values[] = '';
+        }
+        $options = $this->getValueOptions();
+        foreach ($options as $key => $optionSpec) {
+            if (is_array($optionSpec) && array_key_exists('options', $optionSpec)) {
+                foreach ($optionSpec['options'] as $nestedKey => $nestedOptionSpec) {
+                    $values[] = is_array($nestedOptionSpec) ? $nestedOptionSpec['value'] : $nestedKey;
+                }
+            } else {
+                $values[] = is_array($optionSpec) ? $optionSpec['value'] : $key;
+            }
+        }
+        return $values;
+    }
+
+    /**
+     * @return InArrayValidator
+     */
+    public function getInArrayValidator($includeEmpty = false)
+    {
+        if (!isset($this->inArrayValidator)) {
+            $this->setInArrayValidator(
+                $this->getValidatorPluginManager()->get('inarray')
+            );
+        }
+
+        $this->inArrayValidator->setHaystack($this->getValueOptionValues($includeEmpty));
+        return $this->inArrayValidator;
+    }
+
+    /**
+     * @param  InArrayValidator $validator
+     * @return ConfigOption
+     */
+    public function setInArrayValidator(InArrayValidator $validator)
+    {
+        $this->inArrayValidator = $validator;
+        return $this;
+    }
+
+    /**
+     * @return ExplodeValidator
+     */
+    public function getExplodeValidator($includeEmpty = false)
+    {
+        if (!isset($this->explodeValidator)) {
+            $this->setExplodeValidator(
+                $this->getValidatorPluginManager()->get('explode')
+            );
+        }
+
+        $this->explodeValidator
+            ->setValidator($this->getInArrayValidator($includeEmpty))
+            ->setValueDelimiter(null); // skip explode if only one value
+
+        return $this->explodeValidator;
+    }
+
+    /**
+     * @param  ExplodeValidator $validator
+     * @return ConfigOption
+     */
+    public function setExplodeValidator(ExplodeValidator $validator)
+    {
+        $this->explodeValidator = $validator;
+        return $this;
+    }
+
+    public function getValidatorPluginManager()
+    {
+        if (!isset($this->validatorPluginManager)) {
+            $this->setValidatorPluginManager(new ValidatorPluginManager());
+        }
+        return $this->validatorPluginManager;
+    }
+
+    public function setValidatorPluginManager(ValidatorPluginManager $manager)
+    {
+        $this->validatorPluginManager = $manager;
+        return $this;
+    }
+
 }
