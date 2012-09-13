@@ -57,19 +57,7 @@ class ModuleOptions extends AbstractOptions
      */
     public function setConfigOptions($configOptions)
     {
-        $options = array();
-        foreach ($configOptions as $groupId => $settingsConfig) {
-            foreach ($settingsConfig as $settingId => $settingConfig) {
-                $configOption = (! $settingConfig instanceof ConfigOption)
-                    ? new ConfigOption($settingId, $settingConfig)
-                    : $settingConfig;
-
-                $configOption->setGroup($groupId);
-
-                $options[$configOption->getId()] = $configOption;
-            }
-        }
-        $this->configOptions = $options;
+        $this->configOptions = $configOptions;
         return $this;
     }
 
@@ -99,21 +87,4 @@ class ModuleOptions extends AbstractOptions
         return $this->configGroups;
     }
 
-    /**
-     * Cast to array
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        $array = parent::toArray();
-        if (!empty($array['config_options'])) {
-            foreach ($array['config_options'] as $k => $configOption) {
-                if ($configOption instanceof AbstractOptions) {
-                    $array['config_options'][$k] = $configOption->toArray();
-                }
-            }
-        }
-        return $array;
-    }
 }

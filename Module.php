@@ -47,16 +47,25 @@ class Module implements
             ),
 
             'factories' => array(
-                'cgmconfigadmin_module_options' => function ($sm) {
+                // Configuration options for entire module
+                'cgmconfigadmin_module_options' => function($sm) {
                     $config = $sm->get('Config');
                     return new Options\ModuleOptions(
                         isset($config['cgmconfigadmin']) ? $config['cgmconfigadmin'] : array()
                     );
                 },
 
-                'cgmconfigadmin_form' => function($sm) {
+                // Groups of Config Option Definitions
+                'cgmconfigadmin_config_groups' => function($sm) {
                     $options = $sm->get('cgmconfigadmin_module_options');
-                    $form = new Form\ConfigOptions($options);
+                    $modelFactory = new Model\Factory();
+                    return $modelFactory->createConfigGroupsFromModuleOptions($options);
+                },
+
+                // Dynamic Config Options Form
+                'cgmconfigadmin_form' => function($sm) {
+                    $groups = $sm->get('cgmconfigadmin_config_groups');
+                    $form = new Form\ConfigOptions($groups);
                     return $form;
                 },
 

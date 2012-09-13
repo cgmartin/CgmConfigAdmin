@@ -24,14 +24,20 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     protected $serviceManager;
 
     /**
-     * Form
-     */
-    protected $configOptionsForm;
-
-    /**
      * @var ModuleOptions
      */
     protected $options;
+
+    /**
+     * @var array
+     */
+    protected $configGroups = array();
+
+    /**
+     * @var Form
+     */
+    protected $configOptionsForm;
+
 
     /**
      * @param  $config array()
@@ -47,9 +53,31 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
         }
 
         $config = $form->getData();
-        //\Zend\Debug\Debug::dump($config);
+        \Zend\Debug\Debug::dump($config);
 
         return true;
+    }
+
+    /**
+     * Retrieve service manager instance
+     *
+     * @return ServiceManager
+     */
+    public function getServiceManager()
+    {
+        return $this->serviceManager;
+    }
+
+    /**
+     * Set service manager instance
+     *
+     * @param ServiceManager $locator
+     * @return ConfigAdmin
+     */
+    public function setServiceManager(ServiceManager $serviceManager)
+    {
+        $this->serviceManager = $serviceManager;
+        return $this;
     }
 
     /**
@@ -77,24 +105,23 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     }
 
     /**
-     * Retrieve service manager instance
-     *
-     * @return ServiceManager
+     * @return array
      */
-    public function getServiceManager()
+    public function getConfigGroups()
     {
-        return $this->serviceManager;
+        if (!$this->configGroups) {
+            $this->setConfigGroups($this->getServiceManager()->get('cgmconfigadmin_configGroups'));
+        }
+        return $this->configGroups;
     }
 
     /**
-     * Set service manager instance
-     *
-     * @param ServiceManager $locator
+     * @param  Form $form
      * @return ConfigAdmin
      */
-    public function setServiceManager(ServiceManager $serviceManager)
+    public function setConfigGroups(array $groups)
     {
-        $this->serviceManager = $serviceManager;
+        $this->configGroups = $groups;
         return $this;
     }
 

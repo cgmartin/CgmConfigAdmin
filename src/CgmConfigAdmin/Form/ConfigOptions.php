@@ -10,69 +10,59 @@
 namespace CgmConfigAdmin\Form;
 
 use ZfcBase\Form\ProvidesEventsForm;
-use CgmConfigAdmin\Options\ModuleOptions;
+use CgmConfigAdmin\Model\ConfigGroup;
+use CgmConfigAdmin\Model\ConfigOption;
 use Zend\InputFilter\InputFilter;
 use Zend\Form\Fieldset;
 use Zend\Form\Element\Csrf as CsrfElement;
 use Zend\Form\Element\Button as ButtonElement;
+use Zend\Validator\Explode as ExplodeValidator;
+use Zend\Validator\InArray as InArrayValidator;
+use Zend\Validator\ValidatorPluginManager;
 
 class ConfigOptions extends ProvidesEventsForm
 {
+    protected static $elementMappings = array(
+        'radio'         => 'Zend\Form\Element\Radio',
+        'select'        => 'Zend\Form\Element\Select',
+        'multicheckbox' => 'Zend\Form\Element\MultiCheckbox',
+        'text'          => 'Zend\Form\Element\Text',
+        'number'        => 'Zend\Form\Element\Number',
+    );
+
+
     /**
      * @var int
      */
     protected $numFieldsets = 0;
 
     /**
-     * @param  ModuleOptions    $options options for the form
+     * @var ValidatorPluginManager
+     */
+    protected $validatorPluginManager;
+
+    /**
+     * @param  array            $groups  array of ConfigGroups
      * @param  null|int|string  $name    Optional name for the form
      */
-    public function __construct(ModuleOptions $options, $name = null)
+    public function __construct(array $groups, $name = null)
     {
         parent::__construct($name);
 
         $this->setAttribute('class', 'form-horizontal');
 
-        $formInputFilter = new InputFilter();
-        $fieldsets       = array();
-        $inputFilters    = array();
-
-        // Add default fieldset for elements without a group
-        $defaultFieldset = new Fieldset('default');
-        $defaultFieldset->setLabel('Settings');
-        $fieldsets['default'] = $defaultFieldset;
+        $inputFilter = new InputFilter();
 
         // Add fieldsets for all defined groups
-        foreach ($options->getConfigGroups() as $groupKey => $groupLabel) {
-            $fieldset = new Fieldset($groupKey);
-            $fieldset->setLabel($groupLabel);
-            $fieldsets[$groupKey] = $fieldset;
-            $inputFilters[$groupKey] = array(
-                'type' => 'Zend\InputFilter\InputFilter',
+        foreach ($groups as $groupId => $configGroup) {
+            $this->add($this->createConfigGroupElementSpec($configGroup));
+            $inputFilter->add(
+                $this->createConfigGroupInputFilterSpec($configGroup),
+                $configGroup->getId()
             );
         }
+        $this->numFieldsets = count($groups);
 
-        // Add Elements to fieldsets
-        foreach ($options->getConfigOptions() as $configOption) {
-            $configOption->prepareForForm();
-            $group = $configOption->getGroup();
-            if (!array_key_exists($group, $fieldsets)) {
-                throw new \UnexpectedValueException(
-                    sprintf('Undefined Config Option group (%s)', $group)
-                );
-            }
-            $fieldsets[$group]->add($configOption->createFormElementSpec());
-            $inputFilters[$group][$configOption->getId()] = $configOption->createInputFilterSpec();
-        }
-
-        // Add fieldsets and inputfilters to form
-        foreach ($fieldsets as $key => $fieldset) {
-            if ($fieldset->count() > 0) {
-                $this->add($fieldset);
-                $this->numFieldsets++;
-                $formInputFilter->add($inputFilters[$key], $key);
-            }
-        }
 
         $csrf = new CsrfElement('csrf');
         $csrf->setCsrfValidatorOptions(array('timeout' => null));
@@ -96,7 +86,7 @@ class ConfigOptions extends ProvidesEventsForm
             ->setAttribute('type', 'submit');
         $this->add($previewBtn);
 
-        $this->setInputFilter($formInputFilter);
+        $this->setInputFilter($inputFilter);
     }
 
     /**
@@ -106,4 +96,173 @@ class ConfigOptions extends ProvidesEventsForm
     {
         return $this->numFieldsets;
     }
+
+    /**
+     * Create a form element spec from a ConfigGroup
+     *
+     * @return array
+     */
+    public function createConfigGroupElementSpec(ConfigGroup $configGroup)
+    {
+        $elementSpec = array();
+
+        $elementSpec['type'] = 'Zend\Form\Fieldset';
+        $elementSpec['name'] = $configGroup->getId();
+        $elementSpec['options']['label'] = $configGroup->getLabel();
+
+        foreach ($configGroup->getConfigOptions() as $id => $configOption) {
+            $elementSpec['elements'][]['spec'] = $this->createConfigOptionElementSpec($configOption);
+        }
+
+        return $elementSpec;
+    }
+
+    /**
+     * Create a form element spec from a ConfigOption
+     *
+     * @return array
+     */
+    public function createConfigOptionElementSpec(ConfigOption $configOption)
+    {
+        $configOption->prepare();
+        $elementSpec = array();
+
+        $type = $configOption->getInputType();
+        $elementSpec['type'] = (array_key_exists($type, self::$elementMappings))
+            ? self::$elementMappings[$type] : $type;
+
+        $elementSpec['name']             = $configOption->getId();
+        $elementSpec['options']['label'] = $configOption->getLabel();
+
+        // Default Value
+        if (null !== ($defaultValue = $configOption->getDefaultValue())) {
+            $elementSpec['attributes']['value'] = $defaultValue;
+        }
+
+        // Value Options
+        if (null !== ($valueOptions = $configOption->getValueOptions())) {
+            $elementSpec['options']['value_options'] = $valueOptions;
+        }
+
+        return $elementSpec;
+    }
+
+    public function createConfigGroupInputFilterSpec(ConfigGroup $configGroup)
+    {
+        $inputFilters = array(
+            'type' => 'Zend\InputFilter\InputFilter',
+        );
+
+        foreach ($configGroup->getConfigOptions() as $id => $configOption) {
+            $inputFilters[$id] = $this->createConfigOptionInputFilterSpec($configOption);
+        }
+        return $inputFilters;
+    }
+
+    /**
+     * Create an input filter spec from a ConfigOption
+     *
+     * @param  ConfigOption $configOption
+     * @return array
+     */
+    public function createConfigOptionInputFilterSpec(ConfigOption $configOption)
+    {
+        $inputSpec = array();
+
+        $type = $configOption->getInputType();
+
+        $inputSpec['name']        = $configOption->getId();
+        $inputSpec['required']    = false;
+        $inputSpec['allow_empty'] = true;
+
+        $validators = array();
+        $filters    = array();
+        switch ($type) {
+            case 'radio':
+            case 'select':
+                $validators[] = $this->getInArrayValidator($configOption, false);
+                break;
+            case 'multicheckbox':
+                $validators[] = $this->getExplodeValidator($configOption, true);
+                break;
+            //case 'text':
+            case 'number':
+                $filters[]    = array('name' => 'Zend\Filter\StringTrim');
+                $validators[] = array(
+                    'name'    => 'float',
+                    'options' => array('locale' => 'en_US'),
+                );
+                break;
+        }
+        if (!empty($filters)) {
+            $inputSpec['filters'] = $filters;
+        }
+        if (!empty($validators)) {
+            $inputSpec['validators'] = $validators;
+        }
+
+        return $inputSpec;
+    }
+
+    /**
+     * @param  ConfigOption $configOption
+     * @param  bool         $includeEmpty
+     * @return InArrayValidator
+     */
+    public function getInArrayValidator(ConfigOption $configOption, $includeEmpty = false)
+    {
+        $inarray = $this->getValidatorPluginManager()->create('inarray');
+        $inarray->setHaystack($configOption->getValueOptionValues($includeEmpty));
+        return $inarray;
+    }
+
+
+
+    /**
+     * @param  ConfigOption $configOption
+     * @param  bool         $includeEmpty
+     * @return ExplodeValidator
+     */
+    public function getExplodeValidator(ConfigOption $configOption, $includeEmpty = false)
+    {
+        $explode = $this->getValidatorPluginManager()->create('explode');
+        $explode
+            ->setValidator($this->getInArrayValidator($configOption, $includeEmpty))
+            ->setValueDelimiter(null); // skip explode if only one value
+
+        return $explode;
+    }
+
+    public function getValidatorPluginManager()
+    {
+        if (!isset($this->validatorPluginManager)) {
+            $this->setValidatorPluginManager(new ValidatorPluginManager());
+        }
+        return $this->validatorPluginManager;
+    }
+
+    public function setValidatorPluginManager(ValidatorPluginManager $manager)
+    {
+        $this->validatorPluginManager = $manager;
+        return $this;
+    }
+
+    /**
+     * @static
+     * @param array $mappings
+     */
+    public static function setElementMappings(array $mappings)
+    {
+        self::$elementMappings = $mappings;
+    }
+
+    /**
+     * @static
+     * @return array
+     */
+    public static function getElementMappings()
+    {
+        return self::$elementMappings;
+    }
+
 }
