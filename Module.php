@@ -85,6 +85,14 @@ class Module implements
                     $modelFactory = new Model\Factory();
                     return $modelFactory->createConfigGroupsFromModuleOptions($options);
                 },
+
+                'cgmconfigadmin_configvalue_mapper' => function ($sm) {
+                    $mapper = new Entity\ConfigValueMapper();
+                    $mapper->setDbAdapter($sm->get('cgmconfigadmin_zend_db_adapter'));
+                    $mapper->setEntityPrototype(new Entity\ConfigValue);
+                    $mapper->setHydrator(new Entity\ConfigValueHydrator());
+                    return $mapper;
+                },
             ),
         );
     }

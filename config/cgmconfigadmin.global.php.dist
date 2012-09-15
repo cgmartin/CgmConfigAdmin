@@ -77,14 +77,18 @@ $configOptions = array(
     ),
 );
 
-
-
 $settings = array(
-    'cache_dir'      => dirname(dirname(__DIR__)) . '/data/cache',
-    'config_options' => $configOptions,
-    'config_groups'  => $configGroups,
+    'zend_db_adapter' => 'Zend\Db\Adapter\Adapter',
+    'config_options'  => $configOptions,
+    'config_groups'   => $configGroups,
 );
 
 return array(
     'cgmconfigadmin' => $settings,
+    'service_manager' => array(
+        'aliases' => array(
+            'cgmconfigadmin_zend_db_adapter' => (isset($settings['zend_db_adapter'])) ? $settings['zend_db_adapter']: 'Zend\Db\Adapter\Adapter',
+        ),
+    ),
 );
+
