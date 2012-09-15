@@ -11,7 +11,7 @@ namespace CgmConfigAdmin\Service;
 use CgmConfigAdmin\Options\ModuleOptions;
 use CgmConfigAdmin\Form\ConfigOptionsForm;
 use CgmConfigAdmin\Entity\ConfigValue;
-use CgmConfigAdmin\Entity\ConfigValueMapper;
+use CgmConfigAdmin\Entity\ConfigValueMapperInterface;
 use CgmConfigAdmin\Model\ConfigGroup;
 use CgmConfigAdmin\Model\ConfigOption;
 use ZfcBase\EventManager\EventProvider;
@@ -42,7 +42,7 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     protected $session;
 
     /**
-     * @var ConfigValueMapper
+     * @var ConfigValueMapperInterface
      */
     protected $configValueMapper;
 
@@ -63,7 +63,6 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
      */
     public function saveConfigValues($config)
     {
-        //\Zend\Debug\Debug::dump($config);
         $form = $this->getConfigOptionsForm();
         $form->setData($config);
         if (!$form->isValid()) {
@@ -83,9 +82,10 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
             $this->writeConfigValues($config);
             $retVal = self::SAVE_TYPE_SAVE;
         } else {
-            // TODO throw exception
+            throw new Exception\DomainException(
+                'Invalid save type. Must be one of preview, save, or reset'
+            );
         }
-        //\Zend\Debug\Debug::dump($config);
 
         return $retVal;
     }
@@ -116,7 +116,7 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
                 if ($option->hasValueChanged()) {
                     $configValue = new ConfigValue();
                     $configValue
-                        ->setId($option->getId())
+                        ->setId($option->getUniqueId())
                         ->setValue(serialize($option->getValue()));
                     $configValues[] = $configValue;
                 }
@@ -206,8 +206,8 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
             foreach($groups as $group) {
                 /** @var ConfigOption $option  */
                 foreach ($group->getConfigOptions() as $option) {
-                    if (isset($configValues[$option->getId()])) {
-                        $option->setDefaultValue($configValues[$option->getId()]);
+                    if (isset($configValues[$option->getUniqueId()])) {
+                        $option->setValue($configValues[$option->getUniqueId()]);
                     }
                 }
             }
@@ -286,7 +286,7 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     }
 
     /**
-     * @return ConfigValueMapper
+     * @return ConfigValueMapperInterface
      */
     public function getConfigValueMapper()
     {
@@ -297,10 +297,10 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     }
 
     /**
-     * @param  ConfigValueMapper $mapper
+     * @param  ConfigValueMapperInterface $mapper
      * @return ConfigAdmin
      */
-    public function setUserMapper(ConfigValueMapper $mapper)
+    public function setUserMapper(ConfigValueMapperInterface $mapper)
     {
         $this->configValueMapper = $mapper;
         return $this;

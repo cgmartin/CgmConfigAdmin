@@ -105,6 +105,14 @@ class ConfigOption extends AbstractOptions
     }
 
     /**
+     * @return string
+     */
+    public function getUniqueId()
+    {
+        return $this->getGroupId() . '_' . $this->getId();
+    }
+
+    /**
      * @param  string $label
      * @return ConfigOption
      */
@@ -206,7 +214,7 @@ class ConfigOption extends AbstractOptions
      */
     public function hasValueChanged()
     {
-        return ($this->getValue() !== $this->getDefaultValue());
+        return ($this->getValue() != $this->getDefaultValue());
     }
 
     public function resetToDefaultValue()

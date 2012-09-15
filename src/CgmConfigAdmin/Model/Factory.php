@@ -27,10 +27,8 @@ class Factory
         $configGroups  = $options->getConfigGroups();
 
         $groups = array();
-        foreach ($configGroups as $id => $label) {
-            $groups[$id] = new $this->configGroupClassName($id, array(
-                'label' => $label,
-            ));
+        foreach ($configGroups as $id => $group) {
+            $groups[$id] = new $this->configGroupClassName($id, $group);
         }
         if (empty($groups)) {
             $groups['default'] = new $this->configGroupClassName('default', array(

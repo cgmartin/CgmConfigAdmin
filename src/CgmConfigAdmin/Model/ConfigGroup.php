@@ -24,6 +24,11 @@ class ConfigGroup extends AbstractOptions
     protected $label;
 
     /**
+     * @var integer|string
+     */
+    protected $sort = 0;
+
+    /**
      * @var array
      */
     protected $configOptions = array();
@@ -35,7 +40,11 @@ class ConfigGroup extends AbstractOptions
     public function __construct($id, $options = null)
     {
         $this->setId($id);
-        parent::__construct($options);
+        if (is_string($options)) {
+            $this->setLabel($options);
+        } else {
+            parent::__construct($options);
+        }
     }
 
     /**
@@ -75,6 +84,24 @@ class ConfigGroup extends AbstractOptions
             $this->label = Util::convertIdToLabel($this->id);
         }
         return $this->label;
+    }
+
+    /**
+     * @param  integer|string $sort
+     * @return ConfigGroup
+     */
+    public function setSort($sort)
+    {
+        $this->sort = $sort;
+        return $this;
+    }
+
+    /**
+     * @return integer|string
+     */
+    public function getSort()
+    {
+        return $this->sort;
     }
 
     /**

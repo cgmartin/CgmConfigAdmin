@@ -21,7 +21,7 @@ class ModuleOptions extends AbstractOptions
     /**
      * @var string
      */
-    protected $cacheDir = './data/cache';
+    protected $configValueTable = 'configadminvalue';
 
     /**
      * @var array
@@ -34,21 +34,21 @@ class ModuleOptions extends AbstractOptions
     protected $configGroups = array();
 
     /**
-     * @param  string $cacheDir
+     * @param  string $tableName
      * @return ModuleOptions
      */
-    public function setCacheDir($cacheDir)
+    public function setConfigValueTable($tableName)
     {
-        $this->cacheDir = $cacheDir;
+        $this->configValueTable = $tableName;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getCacheDir()
+    public function getConfigValueTable()
     {
-        return $this->cacheDir;
+        return $this->configValueTable;
     }
 
     /**

@@ -21,11 +21,6 @@ class ConfigOptionsController extends AbstractActionController
     protected $configAdminService;
 
     /**
-     * @var Form
-     */
-    protected $configOptionsForm;
-
-    /**
      * Index Action
      *
      * Process the Config Options form
@@ -90,6 +85,5 @@ class ConfigOptionsController extends AbstractActionController
         $this->configAdminService = $service;
         return $this;
     }
-
 
 }

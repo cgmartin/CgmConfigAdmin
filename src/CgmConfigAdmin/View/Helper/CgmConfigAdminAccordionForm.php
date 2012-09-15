@@ -24,10 +24,9 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
      */
     public function __invoke(ConfigOptionsForm $form)
     {
-        $formHelper      = $this->view->plugin('form');
-        $elementHelper   = $this->view->plugin('formelement');
-        $labelHelper     = $this->view->plugin('formlabel');
-        $errorsHelper    = $this->view->plugin('formelementerrors');
+        $formHelper    = $this->view->plugin('form');
+        $elementHelper = $this->view->plugin('formelement');
+        $errorsHelper  = $this->view->plugin('formelementerrors');
 
         $output = $this->renderHeader();
 
@@ -42,19 +41,7 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
             }
 
             foreach ($fieldset as $element) {
-                $output .= '<div class="control-group">';
-                $output .= $labelHelper($element->setLabelAttributes(array('class' => 'control-label')));
-                $output .= '<div class="controls">';
-
-                $labelAttributes = array();
-                if ($element instanceof RadioElement) {
-                    $labelAttributes = array('class' => 'radio inline');
-                } elseif ($element instanceof MultiCheckboxElement) {
-                    $labelAttributes = array('class' => 'checkbox inline');
-                }
-                $output .= $elementHelper($element->setLabelAttributes($labelAttributes));
-                $output .= $errorsHelper($element);
-                $output .= '</div></div>';
+                $output .= $this->renderConfigOption($element);
             }
 
             if ($form->getNumFieldsets() > 1) {
@@ -90,6 +77,30 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
 
         return $output;
     }
+
+    public function renderConfigOption($element)
+    {
+        $labelHelper   = $this->view->plugin('formlabel');
+        $elementHelper = $this->view->plugin('formelement');
+        $errorsHelper  = $this->view->plugin('formelementerrors');
+
+        $output = '<div class="control-group">';
+        $output .= $labelHelper($element->setLabelAttributes(array('class' => 'control-label')));
+        $output .= '<div class="controls">';
+
+        $labelAttributes = array();
+        if ($element instanceof RadioElement) {
+            $labelAttributes = array('class' => 'radio inline');
+        } elseif ($element instanceof MultiCheckboxElement) {
+            $labelAttributes = array('class' => 'checkbox inline');
+        }
+        $output .= $elementHelper($element->setLabelAttributes($labelAttributes));
+        $output .= $errorsHelper($element);
+        $output .= '</div></div>';
+
+        return $output;
+    }
+
 
     public function renderSectionFooter(FieldsetInterface $fieldset)
     {

@@ -78,6 +78,9 @@ class ConfigOptionsForm extends ProvidesEventsForm
     public function addConfigGroups(array $groups)
     {
         // Add fieldsets for all defined groups
+        usort($groups, function ($a, $b) {
+            return strnatcasecmp($a->getSort(), $b->getSort());
+        });
         foreach ($groups as $groupId => $configGroup) {
             $this->add($this->createConfigGroupElementSpec($configGroup));
             $this->filter->add(

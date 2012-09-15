@@ -13,11 +13,9 @@ use ZfcBase\Mapper\AbstractDbMapper;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 
-// TODO: implement ConfigValueMapperInterface
-
-class ConfigValueMapper extends AbstractDbMapper
+class ConfigValueMapper extends AbstractDbMapper implements ConfigValueMapperInterface
 {
-    protected $tableName  = 'configvalue';
+    protected $tableName  = 'configadminvalue';
 
     /**
      * @return HydratingResultSet
@@ -32,14 +30,27 @@ class ConfigValueMapper extends AbstractDbMapper
         return $resultSet;
     }
 
+    /**
+     * @param array $configValues
+     */
     public function saveAll(array $configValues)
     {
-        // start transaction
+        // TODO: start transaction
         $result = parent::delete('1 = 1');
         foreach ($configValues as $configValue) {
             $result = parent::insert($configValue);
             $configValue->setId($result->getGeneratedValue());
         }
-        // end transaction
+        // TODO: end transaction
+    }
+
+    /**
+     * @param  $table string
+     * @return ConfigValueMapper
+     */
+    public function setTableName($table)
+    {
+        $this->tableName = $table;
+        return $this;
     }
 }
