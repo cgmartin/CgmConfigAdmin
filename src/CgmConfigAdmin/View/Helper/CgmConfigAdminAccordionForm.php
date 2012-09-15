@@ -9,7 +9,7 @@
 
 namespace CgmConfigAdmin\View\Helper;
 
-use CgmConfigAdmin\Form\ConfigOptions as ConfigOptionsForm;
+use CgmConfigAdmin\Form\ConfigOptionsForm;
 use Zend\View\Helper\AbstractHelper;
 use Zend\InputFilter\InputFilter;
 use Zend\Form\FieldsetInterface;
@@ -35,10 +35,7 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
         $output .= $elementHelper($form->get('csrf'));
         $output .= $errorsHelper($form->get('csrf'));
 
-        foreach ($form as $fieldset) {
-            if (! $fieldset instanceof FieldsetInterface) {
-                continue;
-            }
+        foreach ($form->getFieldsets() as $fieldset) {
 
             if ($form->getNumFieldsets() > 1) {
                 $output .= $this->renderSectionHeader($fieldset);
@@ -109,11 +106,11 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
         $elementHelper   = $this->view->plugin('formelement');
 
         $output = '<div class="well">';
-        $output .= $elementHelper($form->get('previewBtn')->setAttribute('class', 'btn btn-primary btn-large'));
+        $output .= $elementHelper($form->get('preview')->setAttribute('class', 'btn btn-primary btn-large'));
         $output .= ' ';
-        $output .= $elementHelper($form->get('saveBtn')->setAttribute('class', 'btn btn-success btn-large'));
+        $output .= $elementHelper($form->get('save')->setAttribute('class', 'btn btn-success btn-large'));
         $output .= ' ';
-        $output .= $elementHelper($form->get('resetBtn')->setAttribute('class', 'btn '));
+        $output .= $elementHelper($form->get('reset')->setAttribute('class', 'btn'));
         $output .= '</div>';
 
         return $output;

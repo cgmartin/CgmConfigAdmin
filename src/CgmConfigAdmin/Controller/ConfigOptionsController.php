@@ -37,8 +37,32 @@ class ConfigOptionsController extends AbstractActionController
         $service = $this->getConfigAdminService();
 
         if ($this->request->isPost()) {
-            if ($service->saveConfigValues($this->request->getPost())) {
+            $result = $service->saveConfigValues($this->request->getPost());
+            if (false !== $result) {
                 // Success!
+                // TODO: Configurable messages
+                switch ($result) {
+                    case ConfigAdminService::SAVE_TYPE_PREVIEW:
+                        $message = '<strong>Ready to Preview</strong> ';
+                        $message .= 'You may navigate the site to test your changes. ';
+                        $message .= '<div><em>The changes will not be made permanent until Saved.</em></div>';
+                        $message = array('message' => $message, 'type' => 'info');
+                        break;
+                    case ConfigAdminService::SAVE_TYPE_RESET:
+                        $message = '<strong>Preview Settings have been Reset</strong> ';
+                        $message = array('message' => $message);
+                        break;
+                    case ConfigAdminService::SAVE_TYPE_SAVE:
+                    default:
+                        $message = '<strong>Settings have been Saved</strong> ';
+                        $messageType = 'success';
+                        $message = array('message' => $message, 'type' => 'success');
+                        break;
+                }
+                $this->flashMessenger()
+                    ->setNamespace('cgmconfigadmin')
+                    ->addMessage($message);
+                return $this->redirect()->toRoute('cgmconfigadmin');
             }
         }
         return array(

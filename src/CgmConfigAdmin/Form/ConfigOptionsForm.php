@@ -13,15 +13,15 @@ use ZfcBase\Form\ProvidesEventsForm;
 use CgmConfigAdmin\Model\ConfigGroup;
 use CgmConfigAdmin\Model\ConfigOption;
 use Zend\InputFilter\InputFilter;
-use Zend\Form\Fieldset;
 use Zend\Form\Element\Csrf as CsrfElement;
 use Zend\Form\Element\Button as ButtonElement;
 use Zend\Validator\Explode as ExplodeValidator;
 use Zend\Validator\InArray as InArrayValidator;
 use Zend\Validator\ValidatorPluginManager;
 
-class ConfigOptions extends ProvidesEventsForm
+class ConfigOptionsForm extends ProvidesEventsForm
 {
+    // Maps config option types to elements
     protected static $elementMappings = array(
         'radio'         => 'Zend\Form\Element\Radio',
         'select'        => 'Zend\Form\Element\Select',
@@ -30,63 +30,62 @@ class ConfigOptions extends ProvidesEventsForm
         'number'        => 'Zend\Form\Element\Number',
     );
 
-
-    /**
-     * @var int
-     */
-    protected $numFieldsets = 0;
-
     /**
      * @var ValidatorPluginManager
      */
     protected $validatorPluginManager;
 
     /**
-     * @param  array            $groups  array of ConfigGroups
+     * @param  array            $groups  Optional array of ConfigGroups
      * @param  null|int|string  $name    Optional name for the form
+     * @param  array            $options Optional array of options
      */
-    public function __construct(array $groups, $name = null)
+    public function __construct(array $groups = array(), $name = null, array $options = array())
     {
-        parent::__construct($name);
+        parent::__construct($name, $options);
+        $this->filter = new InputFilter();
 
         $this->setAttribute('class', 'form-horizontal');
 
-        $inputFilter = new InputFilter();
-
-        // Add fieldsets for all defined groups
-        foreach ($groups as $groupId => $configGroup) {
-            $this->add($this->createConfigGroupElementSpec($configGroup));
-            $inputFilter->add(
-                $this->createConfigGroupInputFilterSpec($configGroup),
-                $configGroup->getId()
-            );
-        }
-        $this->numFieldsets = count($groups);
-
+        $this->addConfigGroups($groups);
 
         $csrf = new CsrfElement('csrf');
         $csrf->setCsrfValidatorOptions(array('timeout' => null));
         $this->add($csrf);
 
-        $resetBtn = new ButtonElement('resetBtn');
+        $resetBtn = new ButtonElement('reset');
         $resetBtn
             ->setLabel('Reset')
-            ->setAttribute('type', 'submit');
+            ->setAttribute('type', 'submit')
+            ->setValue('1');
         $this->add($resetBtn);
 
-        $saveBtn = new ButtonElement('saveBtn');
+        $saveBtn = new ButtonElement('save');
         $saveBtn
             ->setLabel('Save')
-            ->setAttribute('type', 'submit');
+            ->setAttribute('type', 'submit')
+            ->setValue('1');
         $this->add($saveBtn);
 
-        $previewBtn = new ButtonElement('previewBtn');
+        $previewBtn = new ButtonElement('preview');
         $previewBtn
             ->setLabel('Preview')
-            ->setAttribute('type', 'submit');
+            ->setAttribute('type', 'submit')
+            ->setValue('1');
         $this->add($previewBtn);
+    }
 
-        $this->setInputFilter($inputFilter);
+    public function addConfigGroups(array $groups)
+    {
+        // Add fieldsets for all defined groups
+        foreach ($groups as $groupId => $configGroup) {
+            $this->add($this->createConfigGroupElementSpec($configGroup));
+            $this->filter->add(
+                $this->createConfigGroupInputFilterSpec($configGroup),
+                $configGroup->getId()
+            );
+        }
+        return $this;
     }
 
     /**
@@ -94,7 +93,7 @@ class ConfigOptions extends ProvidesEventsForm
      */
     public function getNumFieldsets()
     {
-        return $this->numFieldsets;
+        return count($this->fieldsets);
     }
 
     /**
@@ -102,7 +101,7 @@ class ConfigOptions extends ProvidesEventsForm
      *
      * @return array
      */
-    public function createConfigGroupElementSpec(ConfigGroup $configGroup)
+    protected function createConfigGroupElementSpec(ConfigGroup $configGroup)
     {
         $elementSpec = array();
 
@@ -122,7 +121,7 @@ class ConfigOptions extends ProvidesEventsForm
      *
      * @return array
      */
-    public function createConfigOptionElementSpec(ConfigOption $configOption)
+    protected function createConfigOptionElementSpec(ConfigOption $configOption)
     {
         $configOption->prepare();
         $elementSpec = array();
@@ -134,9 +133,9 @@ class ConfigOptions extends ProvidesEventsForm
         $elementSpec['name']             = $configOption->getId();
         $elementSpec['options']['label'] = $configOption->getLabel();
 
-        // Default Value
-        if (null !== ($defaultValue = $configOption->getDefaultValue())) {
-            $elementSpec['attributes']['value'] = $defaultValue;
+        // Value
+        if (null !== ($value = $configOption->getValue())) {
+            $elementSpec['attributes']['value'] = $value;
         }
 
         // Value Options
@@ -147,7 +146,13 @@ class ConfigOptions extends ProvidesEventsForm
         return $elementSpec;
     }
 
-    public function createConfigGroupInputFilterSpec(ConfigGroup $configGroup)
+    /**
+     * Create an input filter spec from a ConfigGroup
+     *
+     * @param  ConfigGroup $configGroup
+     * @return array
+     */
+    protected function createConfigGroupInputFilterSpec(ConfigGroup $configGroup)
     {
         $inputFilters = array(
             'type' => 'Zend\InputFilter\InputFilter',
@@ -165,7 +170,7 @@ class ConfigOptions extends ProvidesEventsForm
      * @param  ConfigOption $configOption
      * @return array
      */
-    public function createConfigOptionInputFilterSpec(ConfigOption $configOption)
+    protected function createConfigOptionInputFilterSpec(ConfigOption $configOption)
     {
         $inputSpec = array();
 
@@ -216,8 +221,6 @@ class ConfigOptions extends ProvidesEventsForm
         return $inarray;
     }
 
-
-
     /**
      * @param  ConfigOption $configOption
      * @param  bool         $includeEmpty
@@ -233,6 +236,9 @@ class ConfigOptions extends ProvidesEventsForm
         return $explode;
     }
 
+    /**
+     * @return ValidatorPluginManager
+     */
     public function getValidatorPluginManager()
     {
         if (!isset($this->validatorPluginManager)) {
@@ -241,6 +247,10 @@ class ConfigOptions extends ProvidesEventsForm
         return $this->validatorPluginManager;
     }
 
+    /**
+     * @param  ValidatorPluginManager $manager
+     * @return ConfigOptionsForm
+     */
     public function setValidatorPluginManager(ValidatorPluginManager $manager)
     {
         $this->validatorPluginManager = $manager;

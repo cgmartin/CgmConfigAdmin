@@ -9,15 +9,19 @@
 namespace CgmConfigAdmin\Service;
 
 use CgmConfigAdmin\Options\ModuleOptions;
-use CgmConfigAdmin\Form\ConfigOptions as ConfigOptionsForm;
+use CgmConfigAdmin\Form\ConfigOptionsForm;
 use ZfcBase\EventManager\EventProvider;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\ServiceManager\ServiceManager;
-use Zend\Form\Form;
+use Zend\Session\Container as SessionContainer;
 
 
 class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
 {
+    const SAVE_TYPE_PREVIEW = 1;
+    const SAVE_TYPE_RESET   = 2;
+    const SAVE_TYPE_SAVE    = 3;
+
     /**
      * @var ServiceManager
      */
@@ -29,12 +33,17 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     protected $options;
 
     /**
+     * @var SessionContainer
+     */
+    protected $session;
+
+    /**
      * @var array
      */
     protected $configGroups = array();
 
     /**
-     * @var Form
+     * @var ConfigOptionsForm
      */
     protected $configOptionsForm;
 
@@ -52,10 +61,26 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
             return false;
         }
 
+        $retVal = false;
         $config = $form->getData();
-        \Zend\Debug\Debug::dump($config);
+        if (!empty($config['preview'])) {
+            // Preview
+            $this->getSession()->configValues = $config;
+            $retVal = self::SAVE_TYPE_PREVIEW;
+        } else if (!empty($config['reset'])) {
+            // Reset Preview to Saved Settings
+            unset($this->getSession()->configValues);
+            $this->resetConfigGroups();
+            $retVal = self::SAVE_TYPE_RESET;
+        } else if (!empty($config['save'])) {
+            // TODO Save data
+            $retVal = self::SAVE_TYPE_SAVE;
+        } else {
+            // TODO throw exception
+        }
+        //\Zend\Debug\Debug::dump($config);
 
-        return true;
+        return $retVal;
     }
 
     /**
@@ -110,7 +135,8 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     public function getConfigGroups()
     {
         if (!$this->configGroups) {
-            $this->setConfigGroups($this->getServiceManager()->get('cgmconfigadmin_configGroups'));
+            $configGroups = $this->getServiceManager()->get('cgmconfigadmin_configGroups');
+            $this->setConfigGroups($configGroups);
         }
         return $this->configGroups;
     }
@@ -121,12 +147,35 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
      */
     public function setConfigGroups(array $groups)
     {
+        // TODO: Apply datastore values
+        $this->applySessionValuesToConfigGroups($groups);
+
         $this->configGroups = $groups;
         return $this;
     }
 
+    protected function applySessionValuesToConfigGroups(array $groups)
+    {
+        $configValues = $this->getSession()->configValues;
+        foreach ($groups as $id => $group) {
+            if (isset($configValues[$id])) {
+                $group->setValues($configValues[$id]);
+            }
+        }
+        return $this;
+    }
+
+    protected function resetConfigGroups()
+    {
+        $configGroups = $this->getConfigGroups();
+        foreach($configGroups as $group){
+            $group->resetToDefaultValues();
+        }
+        return $this;
+    }
+
     /**
-     * @return Form
+     * @return ConfigOptionsForm
      */
     public function getConfigOptionsForm()
     {
@@ -137,12 +186,34 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     }
 
     /**
-     * @param  Form $form
+     * @param  ConfigOptionsForm $form
      * @return ConfigAdmin
      */
-    public function setConfigOptionsForm(Form $form)
+    public function setConfigOptionsForm(ConfigOptionsForm $form)
     {
+        $form->addConfigGroups($this->getConfigGroups());
         $this->configOptionsForm = $form;
+        return $this;
+    }
+
+    /**
+     * @return SessionContainer
+     */
+    public function getSession()
+    {
+        if (!$this->session) {
+            $this->setSession($this->getServiceManager()->get('cgmconfigadmin_session'));
+        }
+        return $this->session;
+    }
+
+    /**
+     * @param  SessionContainer $session
+     * @return ConfigAdmin
+     */
+    public function setSession(SessionContainer $session)
+    {
+        $this->session = $session;
         return $this;
     }
 }

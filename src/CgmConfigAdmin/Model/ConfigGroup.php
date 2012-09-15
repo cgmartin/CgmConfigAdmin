@@ -118,4 +118,23 @@ class ConfigGroup extends AbstractOptions
         }
         return $this;
     }
+
+    public function resetToDefaultValues()
+    {
+        $options = $this->getConfigOptions();
+        foreach ($options as $option) {
+            $option->resetToDefaultValue();
+        }
+        return $this;
+    }
+
+    public function setValues(array $values)
+    {
+        foreach ($this->getConfigOptions() as $id => $option) {
+            if (isset($values[$id])) {
+                $option->setValue($values[$id]);
+            }
+        }
+        return $this;
+    }
 }

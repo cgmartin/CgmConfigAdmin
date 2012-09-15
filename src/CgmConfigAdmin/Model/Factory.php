@@ -13,7 +13,7 @@ use CgmConfigAdmin\Options\ModuleOptions;
 
 class Factory
 {
-    protected $configGroupClassName = 'CgmConfigAdmin\Model\ConfigGroup';
+    protected $configGroupClassName  = 'CgmConfigAdmin\Model\ConfigGroup';
     protected $configOptionClassName = 'CgmConfigAdmin\Model\ConfigOption';
 
     /**
@@ -38,7 +38,6 @@ class Factory
             ));
         }
 
-        $options = array();
         foreach ($configOptions as $groupId => $settingsConfig) {
             if (is_int($groupId)) {
                 $groupId = 'default';

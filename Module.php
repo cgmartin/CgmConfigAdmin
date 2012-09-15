@@ -9,10 +9,12 @@
 
 namespace CgmConfigAdmin;
 
+use CgmConfigAdmin\View\Helper\CgmFlashMessages;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
+use Zend\Session\Container as SessionContainer;
 
 class Module implements
     AutoloaderProviderInterface,
@@ -39,11 +41,27 @@ class Module implements
         return include __DIR__ . '/config/module.config.php';
     }
 
+    public function getViewHelperConfig()
+    {
+        return array(
+            'factories' => array(
+                'cgmFlashMessages' =>  function($sm) {
+                    $plugin = $sm->getServiceLocator()
+                        ->get('ControllerPluginManager')
+                        ->get('flashMessenger');
+                    $helper = new CgmFlashMessages($plugin);
+                    return $helper;
+                },
+            ),
+        );
+    }
+
     public function getServiceConfig()
     {
         return array(
             'invokables' => array(
                 'cgmconfigadmin_service' => 'CgmConfigAdmin\Service\ConfigAdmin',
+                'cgmconfigadmin_form'    => 'CgmConfigAdmin\Form\ConfigOptionsForm',
             ),
 
             'factories' => array(
@@ -55,20 +73,18 @@ class Module implements
                     );
                 },
 
+                // Session container
+                'cgmconfigadmin_session' => function($sm) {
+                    $session = new SessionContainer('cgmconfigadmin');
+                    return $session;
+                },
+
                 // Groups of Config Option Definitions
                 'cgmconfigadmin_config_groups' => function($sm) {
                     $options = $sm->get('cgmconfigadmin_module_options');
                     $modelFactory = new Model\Factory();
                     return $modelFactory->createConfigGroupsFromModuleOptions($options);
                 },
-
-                // Dynamic Config Options Form
-                'cgmconfigadmin_form' => function($sm) {
-                    $groups = $sm->get('cgmconfigadmin_config_groups');
-                    $form = new Form\ConfigOptions($groups);
-                    return $form;
-                },
-
             ),
         );
     }

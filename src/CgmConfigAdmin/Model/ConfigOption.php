@@ -43,6 +43,11 @@ class ConfigOption extends AbstractOptions
     protected $defaultValue;
 
     /**
+     * @var string|array
+     */
+    protected $value;
+
+    /**
      * @var string
      */
     protected $groupId = 'default';
@@ -176,6 +181,41 @@ class ConfigOption extends AbstractOptions
     }
 
     /**
+     * @param array|string $value
+     * @return ConfigOption
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+        return $this;
+    }
+
+    /**
+     * @return array|string
+     */
+    public function getValue()
+    {
+        if (!isset($this->value)) {
+            $this->value = $this->getDefaultValue();
+        }
+        return $this->value;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasValueChanged()
+    {
+        return ($this->getValue() !== $this->getDefaultValue());
+    }
+
+    public function resetToDefaultValue()
+    {
+        $this->setValue(null);
+        return $this;
+    }
+
+    /**
      * @param string $groupId
      * @return ConfigOption
      */
@@ -224,6 +264,8 @@ class ConfigOption extends AbstractOptions
         }
         return $this;
     }
+
+
 
     /**
      * @return array
