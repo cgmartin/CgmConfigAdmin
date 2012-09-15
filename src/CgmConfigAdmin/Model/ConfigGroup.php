@@ -146,6 +146,19 @@ class ConfigGroup extends AbstractOptions
         return $this;
     }
 
+    public function hasConfigOption($id)
+    {
+        return isset($this->configOptions[$id]);
+    }
+
+    public function getConfigOption($id)
+    {
+        if ($this->hasConfigOption($id)) {
+            return $this->configOptions[$id]->prepare();
+        }
+        return null;
+    }
+
     public function resetToDefaultValues()
     {
         $options = $this->getConfigOptions();

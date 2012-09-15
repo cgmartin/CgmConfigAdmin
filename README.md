@@ -23,7 +23,6 @@ Features / Goals
 * A configuration setting can be easily configured to have a particular Form input type (Radio, Select, MultiCheckbox, Text, Range,
   etc.) [COMPLETE]
 * Preview settings in the administrator's browser before publishing to all users. [COMPLETE]
-
 * View Helper to alert when in Preview Mode [INCOMPLETE]
 
 Installation
@@ -95,3 +94,14 @@ Simply add a new config group and options for your module and they will be inclu
             ),
         ),
     );
+
+
+Usage
+-----
+
+To get the current value of a setting:
+
+    <?php
+    // CgmConfigAdmin\Service\ConfigAdmin is registered in the Service Manager:
+    $settingValue = $sm->get('cgmconfigadmin')->getConfigValue('groupid', 'optionid');
+

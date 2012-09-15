@@ -58,8 +58,9 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
 
 
     /**
-     * @param  $config array()
-     * @return bool
+     * @param  $config  array
+     * @return bool|int
+     * @throws Exception\DomainException
      */
     public function saveConfigValues($config)
     {
@@ -90,7 +91,10 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
         return $retVal;
     }
 
-    public function previewConfigValues(array $config)
+    /**
+     * @param $config
+     */
+    public function previewConfigValues($config)
     {
         $this->getSession()->configValues = $config;
         $configGroups = $this->getConfigGroups();
@@ -103,7 +107,7 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
         $this->resetConfigGroups();
     }
 
-    public function writeConfigValues(array $config)
+    public function writeConfigValues($config)
     {
         $configGroups = $this->getConfigGroups();
         $this->applyValuesToConfigGroups($config, $configGroups);
@@ -126,6 +130,23 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
             $this->getConfigValueMapper()->saveAll($configValues);
         }
         unset($this->getSession()->configValues);
+    }
+
+    /**
+     * @param  $groupId  string
+     * @param  $optionId string
+     * @return mixed
+     */
+    public function getConfigValue($groupId, $optionId)
+    {
+        $configGroups = $this->getConfigGroups();
+        if (isset($configGroups[$groupId]) && $configGroups[$groupId]->hasConfigOption($optionId)) {
+            return $configGroups[$groupId]->getConfigOption($optionId)->getValue();
+        }
+
+        throw new Exception\InvalidArgumentException(
+            'Config Value does not exist with the $groupId/$optionId combination'
+        );
     }
 
     /**

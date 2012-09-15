@@ -71,7 +71,7 @@ class ConfigOptionsController extends AbstractActionController
     public function getConfigAdminService()
     {
         if (!$this->configAdminService) {
-            $this->configAdminService = $this->getServiceLocator()->get('cgmconfigadmin_service');
+            $this->configAdminService = $this->getServiceLocator()->get('cgmconfigadmin');
         }
         return $this->configAdminService;
     }
