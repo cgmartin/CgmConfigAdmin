@@ -154,7 +154,7 @@ class ConfigGroup extends AbstractOptions
     public function getConfigOption($id)
     {
         if ($this->hasConfigOption($id)) {
-            return $this->configOptions[$id]->prepare();
+            return $this->configOptions[$id];
         }
         return null;
     }

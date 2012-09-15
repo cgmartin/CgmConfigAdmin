@@ -140,13 +140,18 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     public function getConfigValue($groupId, $optionId)
     {
         $configGroups = $this->getConfigGroups();
-        if (isset($configGroups[$groupId]) && $configGroups[$groupId]->hasConfigOption($optionId)) {
-            return $configGroups[$groupId]->getConfigOption($optionId)->getValue();
+        if (isset($configGroups[$groupId])
+            && $configGroups[$groupId]->hasConfigOption($optionId)
+        ) {
+            return $configGroups[$groupId]
+                ->getConfigOption($optionId)
+                    ->prepare()->getValue();
         }
 
-        throw new Exception\InvalidArgumentException(
-            'Config Value does not exist with the $groupId/$optionId combination'
-        );
+        throw new Exception\InvalidArgumentException(sprintf(
+            'Config Value does not exist with the $groupId/$optionId combination (%s/%s)',
+            $groupId, $optionId
+        ));
     }
 
     /**
