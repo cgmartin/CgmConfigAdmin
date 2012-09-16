@@ -228,20 +228,22 @@ Events
 
 Events below are emitted from the `CgmConfigAdmin\Service\ConfigAdmin` service:
 
-* Previewing Config Values
-  - `previewConfigValues`
-    + Param `configValues` (ArrayObject) List of config values from form.
-  - `previewConfigValues.post`
-    + Param `configValues` (ArrayObject) List of config values saved in session.
-* Resetting Config Values
-  - `resetConfigValues`
-    + Param `configValues` (ArrayObject) The current list config values in the session.
-  - `resetConfigValues.post`
-* Saving Config Values
-  - `saveConfigValues`
-    + Param `configValues` (ArrayObject) The changed list of config values to be saved.
-  - `saveConfigValues.post`
-    + Param `configValues` (ArrayObject) The saved list of config values.
+Previewing Config Values
+* `previewConfigValues`
+  - Param `configValues` (ArrayObject) List of config values from form.
+* `previewConfigValues.post`
+  - Param `configValues` (ArrayObject) List of config values saved in session.
+
+Resetting Config Values
+* `resetConfigValues`
+  - Param `configValues` (ArrayObject) The current list config values in the session.
+* `resetConfigValues.post`
+
+Saving Config Values
+* `saveConfigValues`
+  - Param `configValues` (ArrayObject) The changed list of config values to be saved.
+* `saveConfigValues.post`
+  - Param `configValues` (ArrayObject) The saved list of config values.
 
 To attach event listeners:
 
