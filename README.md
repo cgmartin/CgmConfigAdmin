@@ -28,6 +28,7 @@ Features / Goals
 * Twitter Bootstrap v2 UI classes [IN PROGRESS] (All but error messages are styled)
 * Multiple rendering options for the settings form. [COMPLETE] (Two included form view helpers: Fieldsets and Accordian)
 * View Helper to alert when in Preview Mode [INCOMPLETE]
+* Tooltip support [INCOMPLETE]
 * Table of Contents view helper with Scrollspy (for long pages of settings) [INCOMPLETE]
 * Integration with [ZfcAdmin](https://github.com/ZF-Commons/RFC/wiki/RFC:-ZfcAdmin) [INCOMPLETE]
 
