@@ -31,9 +31,9 @@ class ConfigValueMapper extends AbstractDbMapper implements ConfigValueMapperInt
     }
 
     /**
-     * @param array $configValues
+     * @param array|\Traversable $configValues
      */
-    public function saveAll(array $configValues)
+    public function saveAll($configValues)
     {
         $this->dbAdapter->driver->getConnection()->beginTransaction();
         $result = parent::delete('1 = 1');

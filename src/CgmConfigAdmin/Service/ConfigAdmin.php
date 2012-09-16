@@ -75,7 +75,7 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     }
 
     /**
-     * @param  $config array
+     * @param  array|Traversable $config
      * @return boolean
      */
     public function previewConfigValues($config)
@@ -86,10 +86,20 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
             return false;
         }
 
-        $config = $form->getData();
+        $config = new \ArrayObject($form->getData());
+
+        $this->getEventManager()->trigger(
+            __FUNCTION__, $this,  array('configValues' => $config)
+        );
+
         $this->getSession()->configValues = $config;
         $configGroups = $this->getConfigGroups();
         $this->applyValuesToConfigGroups($config, $configGroups);
+
+        $this->getEventManager()->trigger(
+            __FUNCTION__.'.post', $this, array('configValues' => $config)
+        );
+
         return true;
     }
 
@@ -98,13 +108,23 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
      */
     public function resetConfigValues()
     {
+        $this->getEventManager()->trigger(
+            __FUNCTION__, $this,
+            array('configValues' => $this->getSession()->configValues)
+        );
+
         unset($this->getSession()->configValues);
         $this->resetConfigGroups();
+
+        $this->getEventManager()->trigger(
+            __FUNCTION__.'.post', $this, array()
+        );
+
         return $this;
     }
 
     /**
-     * @param  $config array
+     * @param  array|Traversable $config
      * @return boolean
      */
     public function saveConfigValues($config)
@@ -116,10 +136,11 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
         }
 
         $config = $form->getData();
+
         $configGroups = $this->getConfigGroups();
         $this->applyValuesToConfigGroups($config, $configGroups);
 
-        $configValues = array();
+        $configValues = new \ArrayObject();
         /** @var ConfigGroup $group */
         foreach($configGroups as $group) {
             /** @var ConfigOption $option  */
@@ -133,10 +154,17 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
                 }
             }
         }
-        if (!empty($configValues)) {
-            $this->getConfigValueMapper()->saveAll($configValues);
-        }
+
+        $this->getEventManager()->trigger(
+            __FUNCTION__, $this, array('configValues' => $configValues)
+        );
+
+        $this->getConfigValueMapper()->saveAll($configValues);
         unset($this->getSession()->configValues);
+
+        $this->getEventManager()->trigger(
+            __FUNCTION__.'.post', $this, array('configValues' => $configValues)
+        );
         return true;
     }
 
@@ -191,8 +219,8 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     }
 
     /**
-     * @param array $values
-     * @param array $groups
+     * @param array|\ArrayAccess $values
+     * @param array|\Traversable $groups
      *
      * @return ConfigAdmin
      */
@@ -323,7 +351,7 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     /**
      * Set service manager instance
      *
-     * @param ServiceManager $locator
+     * @param  ServiceManager $locator
      * @return ConfigAdmin
      */
     public function setServiceManager(ServiceManager $serviceManager)

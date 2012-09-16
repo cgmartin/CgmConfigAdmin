@@ -13,7 +13,7 @@ interface ConfigValueMapperInterface
 {
     public function findAll();
 
-    public function saveAll(array $configValues);
+    public function saveAll($configValues);
 
     public function setTableName($table);
 }

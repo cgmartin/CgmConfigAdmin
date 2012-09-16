@@ -220,5 +220,44 @@ To get a setting's value in your project:
 $settingValue = $sm->get('cgmconfigadmin')->getConfigValue('groupid', 'optionid');
 ```
 
-`CgmConfigAdmin\Service\ConfigAdmin` is registered in the Service Manager under the alias `cgmconfigadmin`.
+An instance of the `CgmConfigAdmin\Service\ConfigAdmin` service is registered in the Service Manager
+under the alias `cgmconfigadmin`.
 
+Events
+------
+
+Events below are emitted from the `CgmConfigAdmin\Service\ConfigAdmin` service:
+
+* Previewing Config Values
+  - `previewConfigValues`
+    + Param `configValues` (ArrayObject) List of config values from form.
+  - `previewConfigValues.post`
+    + Param `configValues` (ArrayObject) List of config values saved in session.
+* Resetting Config Values
+  - `resetConfigValues`
+    + Param `configValues` (ArrayObject) The current list config values in the session.
+  - `resetConfigValues.post`
+* Saving Config Values
+  - `saveConfigValues`
+    + Param `configValues` (ArrayObject) The changed list of config values to be saved.
+  - `saveConfigValues.post`
+    + Param `configValues` (ArrayObject) The saved list of config values.
+
+To attach event listeners:
+
+```php
+public function onBootstrap($e)
+{
+    $events = $e->getApplication()->getEventManager()->getSharedManager();
+    $events->attach('CgmConfigAdmin\Service\ConfigAdmin', 'previewConfigValues', function($e) {
+        $configAdminService = $e->getTarget();
+        $configValues = $e->getParam('configValues');
+        // Do what you will...
+    });
+    $events->attach('CgmConfigAdmin\Service\ConfigAdmin','previewConfigValues.post', function($e) {
+        $configAdminService = $e->getTarget();
+        $configValues = $e->getParam('configValues');
+        // Do what you will...
+    });
+}
+```
