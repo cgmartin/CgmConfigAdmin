@@ -38,14 +38,10 @@ Features / Goals
 Installation
 ------------
 
-Composer package info:
-```json
-{
-    "minimum-stability": "dev",
-    "require": {
-        "cgm/config-admin": "dev-master"
-    }
-}
+### Composer / Packagist
+```
+% composer.phar require cgm/config-admin
+Please provide a version constraint for the cgm/config-admin requirement: dev-master
 ```
 
 ### Main Setup
