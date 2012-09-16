@@ -23,12 +23,12 @@ Requirements
 Features / Goals
 ----------------
 * Settings can be easily configured for a particular Form input type
-  (Radio, Select, MultiCheckbox, Text, Range, etc.) [COMPLETE]
-* Preview settings in the administrator's browser before publishing to all users. [COMPLETE]
+  (Radio, Select, MultiCheckbox, Text, Range, etc.)
+* Preview settings in the administrator's browser before publishing to all users.
+* Multiple rendering options for the settings form. (Two included form view helpers: Fieldsets and Accordian)
 * Twitter Bootstrap v2 UI classes (All but error messages are styled) [IN PROGRESS]
-* Multiple rendering options for the settings form. (Two included form view helpers: Fieldsets and Accordian) [COMPLETE]
-* View Helper to alert when in Preview Mode [INCOMPLETE]
 * Tooltip support [INCOMPLETE]
+* View Helper to alert when in Preview Mode [INCOMPLETE]
 * Table of Contents view helper with Scrollspy (for long pages of settings) [INCOMPLETE]
 * Integration with [ZfcAdmin](https://github.com/ZF-Commons/RFC/wiki/RFC:-ZfcAdmin) [INCOMPLETE]
 
