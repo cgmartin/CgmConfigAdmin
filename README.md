@@ -5,14 +5,13 @@ Version 0.0.1 Created by Christopher Martin
 Introduction
 ------------
 
-CgmConfigAdmin is a ZF2 module for managing configuration settings via a web interface.
-Settings are grouped into fieldsets, all on a single page.
+CgmConfigAdmin is a ZF2 module for managing configuration settings via a single web page.
 
 ![CgmConfigAdmin example screenshot](http://grab.by/g6Cg)
 
 Settings are exposed to the administration panel via a simple configuration format.
 
-Module authors can easily include their own configuration groups from their
+Module authors can also easily include their own configuration groups right from their
 module.config.php file.
 
 Requirements
@@ -23,11 +22,11 @@ Requirements
 
 Features / Goals
 ----------------
-* Settings can be easily configured for a particular Form input type (Radio, Select, MultiCheckbox, Text, Range,
-  etc.) [COMPLETE]
+* Settings can be easily configured for a particular Form input type
+  (Radio, Select, MultiCheckbox, Text, Range, etc.) [COMPLETE]
 * Preview settings in the administrator's browser before publishing to all users. [COMPLETE]
-* Twitter Bootstrap v2 UI classes [IN PROGRESS]
-* Multiple rendering options for the settings form. [COMPLETE] (Two example form view helpers: Fieldsets and Accordian)
+* Twitter Bootstrap v2 UI classes [IN PROGRESS] (All but error messages are styled)
+* Multiple rendering options for the settings form. [COMPLETE] (Two included form view helpers: Fieldsets and Accordian)
 * View Helper to alert when in Preview Mode [INCOMPLETE]
 * Table of Contents view helper with Scrollspy (for long pages of settings) [INCOMPLETE]
 * Integration with [ZfcAdmin](https://github.com/ZF-Commons/RFC/wiki/RFC:-ZfcAdmin) [INCOMPLETE]
@@ -57,6 +56,7 @@ Protect the `/config-admin` route with an authorization module, such as
 1. If you do not already have a valid Zend\Db\Adapter\Adapter in your service
    manager configuration, put the following in `./config/autoload/database.local.php`:
 
+   ```php
         <?php
 
         $dbParams = array(
@@ -82,124 +82,129 @@ Protect the `/config-admin` route with an authorization module, such as
                 ),
             ),
         );
+   ```
 
 Configuring custom settings
 ---------------------------
 
 Example:
+```php
+<?php
+//
+// Config Groupings
+//
+$configGroups = array(
+    'group1' => array('label' => 'Simple Options',  'sort' => 1),
+    'group2' => array('label' => 'Complex Options', 'sort' => 2),
+    'group3' => array('label' => 'Multi Options',   'sort' => 3),
+);
 
-    <?php
-    //
-    // Config Groupings
-    //
-    $configGroups = array(
-        'group1' => array('label' => 'Simple Options',  'sort' => 1),
-        'group2' => array('label' => 'Complex Options', 'sort' => 2),
-        'group3' => array('label' => 'Multi Options',   'sort' => 3),
-    );
+//
+// Config Options
+//
+$configOptions = array(
 
-    //
-    // Config Options
-    //
-    $configOptions = array(
+    'group1' => array(
+        //
+        // Simple Options
+        //
+        // Key will be automatically converted to a label
+        //
+        'useCamelCase'    => true,
+        'or-dashes'       => false,
+        'or_underscores'  => true,
+        'simpleText'      => 'Some text',
+        'simpleNumber'    => '50',
+        'simpleSelect'    => array('Foo', 'Bar', 'Dev', 'Null'),
+    ),
 
-        'group1' => array(
-            //
-            // Simple Options
-            //
-            // Key will be automatically converted to a label
-            //
-            'useCamelCase'    => true,
-            'or-dashes'       => false,
-            'or_underscores'  => true,
-            'simpleText'      => 'Some text',
-            'simpleNumber'    => '50',
-            'simpleSelect'    => array('Foo', 'Bar', 'Dev', 'Null'),
+    'group2' => array(
+        //
+        // Complex Options examples
+        //
+        'boolOption' => array(
+            'input_type'    => 'radio',
+            'label'         => 'Boolean Option',
+            'value_options' => array('1' => 'True', '' => 'False'),
+            'default_value' => false,
         ),
 
-        'group2' => array(
-            //
-            // Complex Options examples
-            //
-            'boolOption' => array(
-                'input_type'    => 'radio',
-                'label'         => 'Boolean Option',
-                'value_options' => array('1' => 'True', '' => 'False'),
-                'default_value' => false,
-            ),
-
-            'textOption' => array(
-                'input_type'    => 'text',
-                'label'         => 'Text Option',
-                'default_value' => 'My Site',
-            ),
-
-            'numberOption' => array(
-                'input_type'    => 'number',
-                'label'         => 'Number Option',
-                'default_value' => '10',
-            ),
+        'textOption' => array(
+            'input_type'    => 'text',
+            'label'         => 'Text Option',
+            'default_value' => 'My Site',
         ),
 
-        'group3' => array(
-            //
-            // Complex Multi-Options examples
-            //
-            'multiCheckboxOption' => array(
-                'input_type'    => 'multicheckbox',
-                'label'         => 'MultiCheckbox Option',
-                'value_options' => array('Foo', 'Bar', 'Dev', 'Null'),
-                'default_value' => array('Bar', 'Dev'),
-            ),
-
-            'radioOption' => array(
-                'label'         => 'Radio Option',
-                'input_type'    => 'radio',
-                'value_options' => array('Foo', 'Bar', 'Dev', 'Null'),
-                'default_value' => 'Bar',
-            ),
-
-            'selectOption' => array(
-                'label'         => 'Select Option',
-                'input_type'    => 'select',
-                'value_options' => array('Spring', 'Summer', 'Fall', 'Winter'),
-                'default_value' => 'Fall',
-            ),
+        'numberOption' => array(
+            'input_type'    => 'number',
+            'label'         => 'Number Option',
+            'default_value' => '10',
         ),
-    );
+    ),
 
+    'group3' => array(
+        //
+        // Complex Multi-Options examples
+        //
+        'multiCheckboxOption' => array(
+            'input_type'    => 'multicheckbox',
+            'label'         => 'MultiCheckbox Option',
+            'value_options' => array('Foo', 'Bar', 'Dev', 'Null'),
+            'default_value' => array('Bar', 'Dev'),
+        ),
+
+        'radioOption' => array(
+            'label'         => 'Radio Option',
+            'input_type'    => 'radio',
+            'value_options' => array('Foo', 'Bar', 'Dev', 'Null'),
+            'default_value' => 'Bar',
+        ),
+
+        'selectOption' => array(
+            'label'         => 'Select Option',
+            'input_type'    => 'select',
+            'value_options' => array('Spring', 'Summer', 'Fall', 'Winter'),
+            'default_value' => 'Fall',
+        ),
+    ),
+);
+```
 
 Adding Configuration Groups from other Modules
 ----------------------------------------------
 
 Simply add a new config group and options for your module and they will be included
 
-    <?php
-    // module.config.php
-    return array(
-        //...
-        'cgmconfigadmin' => array(
-            'config_groups' => array(
-                'mymod' => array('label' => 'My Module Options',  'sort' => -100),
-            ),
+```php
+<?php
+// module.config.php
+return array(
+    //...
+    'cgmconfigadmin' => array(
+        'config_groups' => array(
+            'mymod' => array('label' => 'My Module Options',  'sort' => -100),
+        ),
 
-            'config_options' => array(
-                'mymod' => array(
-                    'someText'   => 'Some text',
-                    'someNumber' => '50',
-                    'someSelect' => array('Foo', 'Bar', 'Dev', 'Null'),
-                ),
+        'config_options' => array(
+            'mymod' => array(
+                'someText'   => 'Some text',
+                'someNumber' => '50',
+                'someSelect' => array('Foo', 'Bar', 'Dev', 'Null'),
             ),
         ),
-    );
+    ),
+);
+```
 
 Usage
 -----
 
 To get a setting's value in your project:
 
-    <?php
-    $settingValue = $sm->get('cgmconfigadmin')->getConfigValue('groupid', 'optionid');
+```php
+<?php
+$settingValue = $sm->get('cgmconfigadmin')->getConfigValue('groupid', 'optionid');
+```
 
 `CgmConfigAdmin\Service\ConfigAdmin` is registered in the Service Manager under the alias `cgmconfigadmin`.
 
