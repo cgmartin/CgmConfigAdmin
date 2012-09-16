@@ -32,28 +32,32 @@ class ConfigOptionsController extends AbstractActionController
         $service = $this->getConfigAdminService();
 
         if ($this->request->isPost()) {
-            $result = $service->saveConfigValues($this->request->getPost());
-            if (false !== $result) {
-                // Success!
-                // TODO: Configurable messages
-                switch ($result) {
-                    case ConfigAdminService::SAVE_TYPE_PREVIEW:
-                        $message = '<strong>Ready to Preview</strong> ';
-                        $message .= 'You may navigate the site to test your changes. ';
-                        $message .= '<div><em>The changes will not be made permanent until Saved.</em></div>';
-                        $message = array('message' => $message, 'type' => 'info');
-                        break;
-                    case ConfigAdminService::SAVE_TYPE_RESET:
-                        $message = '<strong>Preview Settings have been Reset</strong> ';
-                        $message = array('message' => $message);
-                        break;
-                    case ConfigAdminService::SAVE_TYPE_SAVE:
-                    default:
-                        $message = '<strong>Settings have been Saved</strong> ';
-                        $messageType = 'success';
-                        $message = array('message' => $message, 'type' => 'success');
-                        break;
+            $config = $this->request->getPost();
+            $successful = false;
+            if (!empty($config['preview'])) {
+                if ($service->previewConfigValues($config)) {
+                    $message = '<strong>Ready to preview</strong> ';
+                    $message .= 'You may navigate the site to test your changes. ';
+                    $message .= '<div><em>The changes will not be made permanent until saved.</em></div>';
+                    $message = array('message' => $message, 'type' => 'info');
+                    $successful = true;
                 }
+
+            } else if (!empty($config['reset'])) {
+                $service->resetConfigValues();
+                $message = '<strong>Preview Settings have been reset</strong> ';
+                $message = array('message' => $message);
+                $successful = true;
+
+            } else if (!empty($config['save'])) {
+                if ($service->saveConfigValues($config)) {
+                    $message = '<strong>Settings have been saved</strong> ';
+                    $message = array('message' => $message, 'type' => 'success');
+                    $successful = true;
+                }
+            }
+
+            if ($successful) {
                 $this->flashMessenger()
                     ->setNamespace('cgmconfigadmin')
                     ->addMessage($message);

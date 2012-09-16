@@ -33,7 +33,7 @@ class ConfigOption extends AbstractOptions
     protected $inputType = 'radio';
 
     /**
-     * @var array
+     * @var array|callback
      */
     protected $valueOptions;
 
@@ -54,12 +54,25 @@ class ConfigOption extends AbstractOptions
 
 
     /**
-     * @param string                $id
+     * @param string|null           $id
      * @param null|int|string|array $options
      */
-    public function __construct($id, $options = null)
+    public function __construct($id = null, $options = null)
     {
-        $this->setId($id);
+        if (isset($id)) {
+            $this->setId($id);
+        }
+        if (isset($options)) {
+            $this->setOptions($options);
+        }
+    }
+
+    /**
+     * @param  int|string|array $options
+     * @return ConfigGroup
+     */
+    public function setOptions($options)
+    {
         if (is_bool($options)) {
             $this->setInputType('radio');
             $this->setDefaultValue(($options) ? '1' : '');
@@ -73,8 +86,9 @@ class ConfigOption extends AbstractOptions
             $this->setInputType('select');
             $this->setValueOptions($options);
         } else {
-            parent::__construct($options);
+            $this->setFromArray($options);
         }
+        return $this;
     }
 
     /**
@@ -153,7 +167,7 @@ class ConfigOption extends AbstractOptions
     }
 
     /**
-     * @param array $valueOptions
+     * @param  array|callback $valueOptions
      * @return ConfigOption
      */
     public function setValueOptions($valueOptions)
@@ -167,6 +181,10 @@ class ConfigOption extends AbstractOptions
      */
     public function getValueOptions()
     {
+        if (is_callable($this->valueOptions)) {
+            $callback = $this->valueOptions;
+            $this->valueOptions = $callback($this);
+        }
         return $this->valueOptions;
     }
 

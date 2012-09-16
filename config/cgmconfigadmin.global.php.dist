@@ -1,17 +1,17 @@
 <?php
 //
 // Config Groupings
+//
 $configGroups = array(
-    'group1' => array('label' => 'Simple Options',  'sort' => -100),
-    'group2' => array('label' => 'Complex Options', 'sort' => -100),
-    'group3' => array('label' => 'Multi Options',   'sort' => -100),
+    'group1' => array('label' => 'Simple Options',  'sort' => 1),
+    'group2' => array('label' => 'Complex Options', 'sort' => 2),
+    'group3' => array('label' => 'Multi Options',   'sort' => 3),
 );
 
+//
+// Config Options
+//
 $configOptions = array(
-
-    //
-    // WARNING: All Option Ids (keys) must be unique, no matter their grouping
-    //
 
     'group1' => array(
         //
@@ -32,6 +32,7 @@ $configOptions = array(
         // Complex Options examples
         //
         'boolOption' => array(
+            'input_type'    => 'radio',
             'label'         => 'Boolean Option',
             'value_options' => array('1' => 'True', '' => 'False'),
             'default_value' => false,
@@ -64,7 +65,10 @@ $configOptions = array(
         'radioOption' => array(
             'label'         => 'Radio Option',
             'input_type'    => 'radio',
-            'value_options' => array('Foo', 'Bar', 'Dev', 'Null'),
+            'value_options' => function ($configOption) {
+                // Callbacks can be used to feed options
+                return array('Foo', 'Bar', 'Dev', 'Null');
+            },
             'default_value' => 'Bar',
         ),
 

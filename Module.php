@@ -60,8 +60,15 @@ class Module implements
     {
         return array(
             'invokables' => array(
-                'cgmconfigadmin'         => 'CgmConfigAdmin\Service\ConfigAdmin',
-                'cgmconfigadmin_form'    => 'CgmConfigAdmin\Form\ConfigOptionsForm',
+                'cgmconfigadmin'              => 'CgmConfigAdmin\Service\ConfigAdmin',
+                'cgmconfigadmin_form'         => 'CgmConfigAdmin\Form\ConfigOptionsForm',
+                'cgmconfigadmin_configgroup'  => 'CgmConfigAdmin\Model\ConfigGroup',
+                'cgmconfigadmin_configoption' => 'CgmConfigAdmin\Model\ConfigOption',
+            ),
+
+            'shared' => array(
+                'cgmconfigadmin_configgroup'  => false,
+                'cgmconfigadmin_configoption' => false,
             ),
 
             'factories' => array(
@@ -80,11 +87,7 @@ class Module implements
                 },
 
                 // Groups of Config Option Definitions
-                'cgmconfigadmin_config_groups' => function($sm) {
-                    $options = $sm->get('cgmconfigadmin_module_options');
-                    $modelFactory = new Model\Factory();
-                    return $modelFactory->createConfigGroupsFromModuleOptions($options);
-                },
+                'cgmconfigadmin_config_groups' => 'CgmConfigAdmin\Model\ConfigGroupFactory',
 
                 // Data Mapper for config values
                 'cgmconfigadmin_configvalue_mapper' => function ($sm) {

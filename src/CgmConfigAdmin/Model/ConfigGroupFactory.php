@@ -10,30 +10,38 @@
 namespace CgmConfigAdmin\Model;
 
 use CgmConfigAdmin\Options\ModuleOptions;
+use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
-class Factory
+class ConfigGroupFactory implements FactoryInterface
 {
-    protected $configGroupClassName  = 'CgmConfigAdmin\Model\ConfigGroup';
-    protected $configOptionClassName = 'CgmConfigAdmin\Model\ConfigOption';
-
     /**
      * @param  ModuleOptions $options
      * @return array
      * @throws Exception\DomainException
      */
-    public function createConfigGroupsFromModuleOptions(ModuleOptions $options)
+    public function createService(ServiceLocatorInterface $services)
     {
+        /** @var $options ModuleOptions */
+        $options = $services->get('cgmconfigadmin_module_options');
+
         $configOptions = $options->getConfigOptions();
         $configGroups  = $options->getConfigGroups();
 
         $groups = array();
         foreach ($configGroups as $id => $group) {
-            $groups[$id] = new $this->configGroupClassName($id, $group);
+            $configGroup = $services->get('cgmconfigadmin_configgroup');
+            $configGroup->setId($id)->setOptions($group);
+            $groups[$id] = $configGroup;
         }
         if (empty($groups)) {
-            $groups['default'] = new $this->configGroupClassName('default', array(
-                'label' => 'Settings',
-            ));
+            $configGroup = $services->get('cgmconfigadmin_configgroup');
+            $configGroup
+                ->setId('default')
+                ->setOptions(array(
+                    'label' => 'Settings',
+                ));
+            $groups['default'] = $configGroup;
         }
 
         foreach ($configOptions as $groupId => $settingsConfig) {
@@ -46,32 +54,12 @@ class Factory
                 );
             }
             foreach ($settingsConfig as $settingId => $settingConfig) {
-                $configOption = new $this->configOptionClassName($settingId, $settingConfig);
+                $configOption = $services->get('cgmconfigadmin_configoption');
+                $configOption->setId($settingId)->setOptions($settingConfig);
                 $groups[$groupId]->addConfigOption($configOption);
             }
         }
 
         return $groups;
     }
-
-    /**
-     * @param  $class string
-     * @return Factory
-     */
-    public function setConfigGroupClassName($class)
-    {
-        $this->configGroupClass = $class;
-        return $this;
-    }
-
-    /**
-     * @param  $class string
-     * @return Factory
-     */
-    public function setConfigOptionClassName($class)
-    {
-        $this->configOptionClass = $class;
-        return $this;
-    }
-
 }

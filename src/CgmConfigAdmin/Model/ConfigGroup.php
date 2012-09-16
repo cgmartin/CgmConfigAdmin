@@ -37,14 +37,28 @@ class ConfigGroup extends AbstractOptions
      * @param string                $id
      * @param null|int|string|array $options
      */
-    public function __construct($id, $options = null)
+    public function __construct($id = null, $options = null)
     {
-        $this->setId($id);
+        if (isset($id)) {
+            $this->setId($id);
+        }
+        if (isset($options)) {
+            $this->setOptions($options);
+        }
+    }
+
+    /**
+     * @param  string|array $options
+     * @return ConfigGroup
+     */
+    public function setOptions($options)
+    {
         if (is_string($options)) {
             $this->setLabel($options);
         } else {
-            parent::__construct($options);
+            $this->setFromArray($options);
         }
+        return $this;
     }
 
     /**

@@ -47,11 +47,19 @@ class ConfigOptionsForm extends ProvidesEventsForm
 
         $this->setAttribute('class', 'form-horizontal');
 
-        $this->addConfigGroups($groups);
+        if (!empty($groups)) {
+            $this->addConfigGroups($groups);
+        }
+
+        $this->addActionButtons();
 
         $csrf = new CsrfElement('csrf');
         $csrf->setCsrfValidatorOptions(array('timeout' => null));
         $this->add($csrf);
+    }
+
+    public function addActionButtons()
+    {
 
         $resetBtn = new ButtonElement('reset');
         $resetBtn
