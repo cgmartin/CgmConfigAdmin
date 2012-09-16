@@ -1,0 +1,35 @@
+{
+    "name": "cgm/config-admin",
+    "description": "ZF2 module for easy administration of application settings",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "zf2",
+        "zend",
+        "module"
+    ],
+    "homepage": "https://github.com/cgmartin/CgmConfigAdmin",
+    "authors": [
+        {
+            "name": "Christopher Martin",
+            "email": "cgmartin@gmail.com",
+            "homepage": "http://cgmartin.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "zendframework/zendframework": "2.0.*",
+        "zf-commons/zfc-base": "dev-master"
+    },
+    "suggest": {
+        "bjyoungblood/bjy-authorize": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "CgmConfigAdmin": "src/"
+        },
+        "classmap": [
+            "./"
+        ]
+    }
+}
