@@ -35,13 +35,13 @@ class ConfigValueMapper extends AbstractDbMapper implements ConfigValueMapperInt
      */
     public function saveAll(array $configValues)
     {
-        // TODO: start transaction
+        $this->dbAdapter->driver->getConnection()->beginTransaction();
         $result = parent::delete('1 = 1');
         foreach ($configValues as $configValue) {
             $result = parent::insert($configValue);
             $configValue->setId($result->getGeneratedValue());
         }
-        // TODO: end transaction
+        $this->dbAdapter->driver->getConnection()->commit();
     }
 
     /**
