@@ -29,8 +29,9 @@ Features / Goals
 * Twitter Bootstrap v2 UI classes (All but error messages are styled) [IN PROGRESS]
 * Tooltip support [INCOMPLETE]
 * View Helper to alert when in Preview Mode [INCOMPLETE]
-* Table of Contents view helper with Scrollspy (for long pages of settings) [INCOMPLETE]
 * Integration with [ZfcAdmin](https://github.com/ZF-Commons/RFC/wiki/RFC:-ZfcAdmin) [INCOMPLETE]
+* Doctrine support [INCOMPLETE]
+* Table of Contents view helper with Scrollspy (for long pages of settings) [INCOMPLETE]
 
 Installation
 ------------
