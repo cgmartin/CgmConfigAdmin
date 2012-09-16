@@ -167,7 +167,10 @@ $configOptions = array(
         'radioOption' => array(
             'label'         => 'Radio Option',
             'input_type'    => 'radio',
-            'value_options' => array('Foo', 'Bar', 'Dev', 'Null'),
+            'value_options' => function ($configOption) {
+                // Callbacks can be used to feed options
+                return array('Foo', 'Bar', 'Dev', 'Null');
+            },
             'default_value' => 'Bar',
         ),
 
