@@ -36,12 +36,21 @@ Features / Goals
 Installation
 ------------
 
+Composer package info:
+```json
+{
+    "minimum-stability": "dev",
+    "require": {
+        "cgm/config-admin": "dev-master"
+    }
+}
+```
+
 ### Main Setup
 
 1. Install the [ZfcBase](https://github.com/ZF-Commons/ZfcBase) ZF2 module
-   by cloning it into `./vendor/` and enabling it in your
-   `application.config.php` file.
-2. Clone this project into your `./vendor/` directory and enable it in your
+   by cloning it into `./vendor/` and enabling `ZfcBase` in your `application.config.php` file.
+2. Clone this project into your `./vendor/` directory and enable `CgmConfigAdmin` in your
    `application.config.php` file.
 3. Copy `./vendor/CgmConfigAdmin/config/cgmconfigadmin.global.php.dist` to
    `./config/autoload/cgmconfigadmin.global.php` and change the values as desired.
