@@ -7,7 +7,7 @@ Introduction
 
 Need to give clients access to website configuration settings?
 
-CgmConfigAdmin is a ZF2 module for managing settings via a single web page.
+CgmConfigAdmin is a ZF2 module for managing site-wide settings via a single web page.
 
 ![CgmConfigAdmin example screenshot](http://grab.by/g6Cg)
 
@@ -26,7 +26,7 @@ Features / Goals
 ----------------
 * Settings can be easily configured for a particular Form input type
   (Radio, Select, MultiCheckbox, Text, Range, etc.)
-* Preview settings in the administrator's browser before publishing to all users.
+* Preview settings in the administrator's browser before publishing.
 * Multiple rendering options for the settings form. (Two included form view helpers: Fieldsets and Accordian)
 * Twitter Bootstrap v2 UI classes (All but error messages are styled) [IN PROGRESS]
 * Tooltip support [INCOMPLETE]
