@@ -101,6 +101,7 @@ Configuring custom settings
 ---------------------------
 
 Example:
+
 ```php
 <?php
 //
@@ -233,27 +234,37 @@ Events
 
 Events below are emitted from the `CgmConfigAdmin\Service\ConfigAdmin` service:
 
-Previewing Config Values
-* `previewConfigValues` : Before preview values are saved in the session.
-  - Param `configValues` (ArrayObject) List of config values from form.
+#### Previewing Config Values
 
-* `previewConfigValues.post` : After preview values are saved in the session.
-  - Param `configValues` (ArrayObject) List of config values saved in session.
+`previewConfigValues` : Before preview values are saved in the session.
 
-Resetting Config Values
-* `resetConfigValues` : Before the previewed config values are reset.
-  - Param `configValues` (ArrayObject) The current list config values in the session.
+* Param `configValues` (ArrayObject) List of config values from form.
 
-* `resetConfigValues.post` : After the previewed config values are reset.
+`previewConfigValues.post` : After preview values are saved in the session.
 
-Saving Config Values
-* `saveConfigValues` : Before the changed list of config values are saved.
-  - Param `configValues` (ArrayObject) The changed list of config values to be saved.
+* Param `configValues` (ArrayObject) List of config values saved in session.
 
-* `saveConfigValues.post` : After the config values have been saved.
-  - Param `configValues` (ArrayObject) The saved list of config values.
 
-To attach event listeners:
+#### Resetting Config Values
+
+`resetConfigValues` : Before the previewed config values are reset.
+
+* Param `configValues` (ArrayObject) The current list config values in the session.
+
+`resetConfigValues.post` : After the previewed config values are reset.
+
+#### Saving Config Values
+
+`saveConfigValues` : Before the changed list of config values are saved.
+
+* Param `configValues` (ArrayObject) The changed list of config values to be saved.
+
+`saveConfigValues.post` : After the config values have been saved.
+
+* Param `configValues` (ArrayObject) The saved list of config values.
+
+
+### To attach event listeners:
 
 ```php
 public function onBootstrap($e)
