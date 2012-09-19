@@ -52,6 +52,10 @@ class ConfigOption extends AbstractOptions
      */
     protected $groupId = 'default';
 
+    /**
+     * @var boolean
+     */
+    protected $required = false;
 
     /**
      * @param string|null           $id
@@ -257,6 +261,24 @@ class ConfigOption extends AbstractOptions
     public function getGroupId()
     {
         return $this->groupId;
+    }
+
+    /**
+     * @param  boolean $required
+     * @return ConfigOption
+     */
+    public function setRequired($required)
+    {
+        $this->required = $required;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getRequired()
+    {
+        return $this->required;
     }
 
     /**

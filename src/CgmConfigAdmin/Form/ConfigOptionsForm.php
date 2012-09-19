@@ -188,8 +188,8 @@ class ConfigOptionsForm extends ProvidesEventsForm
         $type = $configOption->getInputType();
 
         $inputSpec['name']        = $configOption->getId();
-        $inputSpec['required']    = false;
-        $inputSpec['allow_empty'] = true;
+        $inputSpec['required']    = $configOption->getRequired();
+        $inputSpec['allow_empty'] = ! $configOption->getRequired();
 
         $validators = array();
         $filters    = array();

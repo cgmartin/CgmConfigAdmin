@@ -21,17 +21,18 @@ Requirements
 
 * [Zend Framework 2](https://github.com/zendframework/zf2) (latest master)
 * [ZfcBase](https://github.com/ZF-Commons/ZfcBase) (latest master)
+* A Database (preferrably with transaction support)
 
 Features / Goals
 ----------------
 * Settings can be easily configured for a particular Form input type
   (Radio, Select, MultiCheckbox, Text, Range, etc.)
 * Preview settings in the administrator's browser before publishing.
-* Multiple rendering options for the settings form. (Two included form view helpers: Fieldsets and Accordian)
-* Twitter Bootstrap v2 UI classes (All but error messages are styled) [IN PROGRESS]
-* Tooltip support [INCOMPLETE]
+* Multiple rendering options for the settings form. Two included form view helpers: Fieldsets and Accordian
+* Twitter Bootstrap v2 UI classes
 * View Helper to alert when in Preview Mode [INCOMPLETE]
 * Integration with [ZfcAdmin](https://github.com/ZF-Commons/RFC/wiki/RFC:-ZfcAdmin) [INCOMPLETE]
+* Tooltips for extra help/descriptions [INCOMPLETE]
 * Doctrine support [INCOMPLETE]
 * Table of Contents view helper with Scrollspy (for long pages of settings) [INCOMPLETE]
 
@@ -62,36 +63,39 @@ Protect the `/config-admin` route with an authorization module, such as
 
 ### Database Adapter Configuration
 
-1. If you do not already have a valid Zend\Db\Adapter\Adapter in your service
-   manager configuration, put the following in `./config/autoload/database.local.php`:
+If you do not already have a valid Zend\Db\Adapter\Adapter in your service
+manager configuration, put the following in `./config/autoload/database.local.php`:
 
-   ```php
-        <?php
+```php
+    <?php
 
-        $dbParams = array(
-            'database'  => 'changeme',
-            'username'  => 'changeme',
-            'password'  => 'changeme',
-            'hostname'  => 'changeme',
-        );
+    $dbParams = array(
+        'database'  => 'changeme',
+        'username'  => 'changeme',
+        'password'  => 'changeme',
+        'hostname'  => 'changeme',
+    );
 
-        return array(
-            'service_manager' => array(
-                'factories' => array(
-                    'Zend\Db\Adapter\Adapter' => function ($sm) use ($dbParams) {
-                        return new Zend\Db\Adapter\Adapter(array(
-                            'driver'    => 'pdo',
-                            'dsn'       => 'mysql:dbname='.$dbParams['database'].';host='.$dbParams['hostname'],
-                            'database'  => $dbParams['database'],
-                            'username'  => $dbParams['username'],
-                            'password'  => $dbParams['password'],
-                            'hostname'  => $dbParams['hostname'],
-                        ));
-                    },
-                ),
+    return array(
+        'service_manager' => array(
+            'factories' => array(
+                'Zend\Db\Adapter\Adapter' => function ($sm) use ($dbParams) {
+                    return new Zend\Db\Adapter\Adapter(array(
+                        'driver'    => 'pdo',
+                        'dsn'       => 'mysql:dbname='.$dbParams['database'].';host='.$dbParams['hostname'],
+                        'database'  => $dbParams['database'],
+                        'username'  => $dbParams['username'],
+                        'password'  => $dbParams['password'],
+                        'hostname'  => $dbParams['hostname'],
+                    ));
+                },
             ),
-        );
-   ```
+        ),
+    );
+```
+
+See the [Zend\Db\Adapter](http://framework.zend.com/manual/2.0/en/modules/zend.db.adapter.html)
+documentation for more info on how to configure the adapter for your specific database.
 
 Configuring custom settings
 ---------------------------
@@ -142,6 +146,7 @@ $configOptions = array(
             'input_type'    => 'text',
             'label'         => 'Text Option',
             'default_value' => 'My Site',
+            'required'      => true,        // options are not required by default
         ),
 
         'numberOption' => array(

@@ -13,6 +13,7 @@ use CgmConfigAdmin\Form\ConfigOptionsForm;
 use Zend\View\Helper\AbstractHelper;
 use Zend\InputFilter\InputFilter;
 use Zend\Form\FieldsetInterface;
+use Zend\Form\ElementInterface;
 use Zend\Form\Element\Radio as RadioElement;
 use Zend\Form\Element\MultiCheckbox as MultiCheckboxElement;
 
@@ -27,6 +28,10 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
         $formHelper    = $this->view->plugin('form');
         $elementHelper = $this->view->plugin('formelement');
         $errorsHelper  = $this->view->plugin('formelementerrors');
+        $errorsHelper
+            ->setMessageOpenFormat('<div class="help-block">')
+            ->setMessageSeparatorString('</div><div class="help-block">')
+            ->setMessageCloseString('</div>');
 
         $output = $this->renderHeader();
 
@@ -78,13 +83,16 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
         return $output;
     }
 
-    public function renderConfigOption($element)
+    public function renderConfigOption(ElementInterface $element)
     {
         $labelHelper   = $this->view->plugin('formlabel');
         $elementHelper = $this->view->plugin('formelement');
         $errorsHelper  = $this->view->plugin('formelementerrors');
 
-        $output = '<div class="control-group">';
+        $errors = $element->getMessages();
+        $errorClass = (!empty($errors)) ? ' error' : '';
+
+        $output = '<div class="control-group' . $errorClass . '">';
         $output .= $labelHelper($element->setLabelAttributes(array('class' => 'control-label')));
         $output .= '<div class="controls">';
 
