@@ -220,7 +220,9 @@ To get a setting's value in your project:
 
 ```php
 <?php
-$settingValue = $sm->get('cgmconfigadmin')->getConfigValue('groupid', 'optionid');
+$settingValue = $sm->get('cgmconfigadmin')->getConfigValue('groupId', 'optionId');
+// ..or..
+$settingValue = $sm->get('cgmconfigadmin')->getConfigValue('groupId/optionId');
 ```
 
 An instance of the `CgmConfigAdmin\Service\ConfigAdmin` service is registered in the Service Manager

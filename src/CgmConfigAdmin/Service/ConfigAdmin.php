@@ -53,12 +53,18 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     protected $configOptionsForm;
 
     /**
-     * @param  $groupId  string
-     * @param  $optionId string
+     * @param  string $groupId  The group id, or format 'groupName\optionName'
+     * @param  string $optionId (optional) The option id
      * @return mixed
      */
-    public function getConfigValue($groupId, $optionId)
+    public function getConfigValue($groupId, $optionId = null)
     {
+        // Support optional format 'groupName\optionName'
+        if (!isset($optionId)) {
+            $parts = preg_split('/\//', $groupId);
+            list($groupId, $optionId) = $parts;
+        }
+
         $configGroups = $this->getConfigGroups();
         if (isset($configGroups[$groupId])
             && $configGroups[$groupId]->hasConfigOption($optionId)
