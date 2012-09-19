@@ -216,7 +216,7 @@ return array(
 Usage
 -----
 
-To get a setting's value in your project:
+To retrieve a config value:
 
 ```php
 <?php
