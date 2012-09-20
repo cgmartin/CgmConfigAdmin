@@ -42,6 +42,12 @@ class ConfigOptionsForm extends ProvidesEventsForm
      */
     public function __construct(array $groups = array(), $name = null, array $options = array())
     {
+        $isPreviewEnabled = true;
+        if (isset($options['preview_enabled'])) {
+            $isPreviewEnabled = $options['preview_enabled'];
+            unset($options['preview_enabled']);
+        }
+
         parent::__construct($name, $options);
         $this->filter = new InputFilter();
 
@@ -51,22 +57,47 @@ class ConfigOptionsForm extends ProvidesEventsForm
             $this->addConfigGroups($groups);
         }
 
-        $this->addActionButtons();
+        $this->addActionButtons($isPreviewEnabled);
 
         $csrf = new CsrfElement('csrf');
         $csrf->setCsrfValidatorOptions(array('timeout' => null));
         $this->add($csrf);
     }
 
-    public function addActionButtons()
+    /**
+     * @param  boolean $enabled
+     * @return ConfigOptionsForm
+     */
+    public function setIsPreviewEnabled($enabled)
     {
+        return $this->addActionButtons($enabled);
+    }
 
-        $resetBtn = new ButtonElement('reset');
-        $resetBtn
-            ->setLabel('Reset')
-            ->setAttribute('type', 'submit')
-            ->setValue('1');
-        $this->add($resetBtn);
+    /**
+     * @param  boolean $isPreviewEnabled
+     * @return ConfigOptionsForm
+     */
+    public function addActionButtons($isPreviewEnabled = true)
+    {
+        $this->remove('reset');
+        $this->remove('preview');
+        $this->remove('save');
+
+        if ($isPreviewEnabled) {
+            $resetBtn = new ButtonElement('reset');
+            $resetBtn
+                ->setLabel('Reset')
+                ->setAttribute('type', 'submit')
+                ->setValue('1');
+            $this->add($resetBtn);
+
+            $previewBtn = new ButtonElement('preview');
+            $previewBtn
+                ->setLabel('Preview')
+                ->setAttribute('type', 'submit')
+                ->setValue('1');
+            $this->add($previewBtn);
+        }
 
         $saveBtn = new ButtonElement('save');
         $saveBtn
@@ -75,14 +106,13 @@ class ConfigOptionsForm extends ProvidesEventsForm
             ->setValue('1');
         $this->add($saveBtn);
 
-        $previewBtn = new ButtonElement('preview');
-        $previewBtn
-            ->setLabel('Preview')
-            ->setAttribute('type', 'submit')
-            ->setValue('1');
-        $this->add($previewBtn);
+        return $this;
     }
 
+    /**
+     * @param  array $groups
+     * @return ConfigOptionsForm
+     */
     public function addConfigGroups(array $groups)
     {
         // Add fieldsets for all defined groups

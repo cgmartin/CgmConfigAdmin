@@ -23,7 +23,16 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
      * @param  ConfigOptions $form
      * @return string
      */
-    public function __invoke(ConfigOptionsForm $form)
+    public function __invoke(ConfigOptionsForm $form = null)
+    {
+        if (!$form) {
+            return $this;
+        }
+
+        return $this->render($form);
+    }
+
+    public function render(ConfigOptionsForm $form)
     {
         $formHelper    = $this->view->plugin('form');
         $elementHelper = $this->view->plugin('formelement');
@@ -125,11 +134,15 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
         $elementHelper   = $this->view->plugin('formelement');
 
         $output = '<div class="well">';
-        $output .= $elementHelper($form->get('preview')->setAttribute('class', 'btn btn-primary btn-large'));
-        $output .= ' ';
+        if ($form->has('preview')) {
+            $output .= $elementHelper($form->get('preview')->setAttribute('class', 'btn btn-primary btn-large'));
+            $output .= ' ';
+        }
         $output .= $elementHelper($form->get('save')->setAttribute('class', 'btn btn-success btn-large'));
-        $output .= ' ';
-        $output .= $elementHelper($form->get('reset')->setAttribute('class', 'btn'));
+        if ($form->has('reset')) {
+            $output .= ' ';
+            $output .= $elementHelper($form->get('reset')->setAttribute('class', 'btn'));
+        }
         $output .= '</div>';
 
         return $output;
