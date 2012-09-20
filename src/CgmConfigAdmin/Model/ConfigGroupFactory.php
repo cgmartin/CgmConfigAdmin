@@ -10,23 +10,35 @@
 namespace CgmConfigAdmin\Model;
 
 use CgmConfigAdmin\Options\ModuleOptions;
-use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class ConfigGroupFactory implements FactoryInterface
+class ConfigGroupFactory
 {
     /**
-     * @param  ModuleOptions $options
+     * @param  ServiceLocatorInterface $services
+     * @param  ModuleOptions           $options
+     * @param  string                  $context
      * @return array
      * @throws Exception\DomainException
      */
-    public function createService(ServiceLocatorInterface $services)
+    public function createConfigGroups(ServiceLocatorInterface $services, ModuleOptions $options, $context = 'site')
     {
-        /** @var $options ModuleOptions */
-        $options = $services->get('cgmconfigadmin_module_options');
-
         $configOptions = $options->getConfigOptions();
         $configGroups  = $options->getConfigGroups();
+
+        if (!isset($configOptions[$context])) {
+            throw new Exception\DomainException(
+                sprintf('Config Options context not found (%s)', $context)
+            );
+        }
+        if (!isset($configGroups[$context])) {
+            throw new Exception\DomainException(
+                sprintf('Config Groups context not found (%s)', $context)
+            );
+        }
+
+        $configOptions = $configOptions[$context];
+        $configGroups  = $configGroups[$context];
 
         $groups = array();
         foreach ($configGroups as $id => $group) {

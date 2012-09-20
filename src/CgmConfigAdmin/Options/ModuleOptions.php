@@ -21,7 +21,7 @@ class ModuleOptions extends AbstractOptions
     /**
      * @var string
      */
-    protected $configValueTable = 'configadminvalue';
+    protected $configValuesTable = 'configadminvalues';
 
     /**
      * @var array
@@ -37,18 +37,18 @@ class ModuleOptions extends AbstractOptions
      * @param  string $tableName
      * @return ModuleOptions
      */
-    public function setConfigValueTable($tableName)
+    public function setConfigValuesTable($tableName)
     {
-        $this->configValueTable = $tableName;
+        $this->configValuesTable = $tableName;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getConfigValueTable()
+    public function getConfigValuesTable()
     {
-        return $this->configValueTable;
+        return $this->configValuesTable;
     }
 
     /**

@@ -82,11 +82,15 @@ $configOptions = array(
 );
 
 $settings = array(
-    'zend_db_adapter'    => 'Zend\Db\Adapter\Adapter',
-    'config_value_table' => 'configadminvalue',
+    'zend_db_adapter'     => 'Zend\Db\Adapter\Adapter',
+    'config_values_table' => 'configadminvalues',
 
-    'config_options'     => $configOptions,
-    'config_groups'      => $configGroups,
+    'config_options' => array(
+        'site' => $configOptions,
+    ),
+    'config_groups'  => array(
+        'site' => $configGroups,
+    ),
 );
 
 return array(

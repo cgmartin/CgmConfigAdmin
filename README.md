@@ -1,6 +1,6 @@
 CgmConfigAdmin
 ==============
-Version 1.0.0 Created by Christopher Martin
+Version 1.1.0 Created by Christopher Martin
 
 Introduction
 ------------
@@ -8,6 +8,10 @@ Introduction
 Need to give clients access to website configuration settings?
 
 CgmConfigAdmin is a ZF2 module for managing site-wide settings via a single web page.
+
+**UPDATE:** Per-user settings is now also possible, at the expense of breaking
+API changes. If you have previously installed, see the updates in `schema.sql` and
+`cgmconfigadmin.global.php.dist`.
 
 ![CgmConfigAdmin example screenshot](http://grab.by/g6Cg)
 
@@ -21,7 +25,7 @@ Requirements
 
 * [Zend Framework 2](https://github.com/zendframework/zf2) (latest master)
 * [ZfcBase](https://github.com/ZF-Commons/ZfcBase) (latest master)
-* A Database (preferrably with transaction support)
+* A Database or Key/Value store
 
 Features / Goals
 ----------------
@@ -30,6 +34,7 @@ Features / Goals
 * Preview settings in the administrator's browser before publishing.
 * Multiple rendering options for the settings form. Two included form view helpers: Fieldsets and Accordian
 * Twitter Bootstrap v2 UI classes
+* Per-user settings support, see example in Module.php [Complete, but needs better docs]
 * View Helper to alert when in Preview Mode [INCOMPLETE]
 * Integration with [ZfcAdmin](https://github.com/ZF-Commons/RFC/wiki/RFC:-ZfcAdmin) [INCOMPLETE]
 * Tooltips for extra help/descriptions [INCOMPLETE]
@@ -200,14 +205,18 @@ return array(
     //...
     'cgmconfigadmin' => array(
         'config_groups' => array(
-            'mymod' => array('label' => 'My Module Options',  'sort' => -100),
+            'site' => array(
+                'mymod' => array('label' => 'My Module Options',  'sort' => -100),
+            ),
         ),
 
         'config_options' => array(
-            'mymod' => array(
-                'someText'   => 'Some text',
-                'someNumber' => '50',
-                'someSelect' => array('Foo', 'Bar', 'Dev', 'Null'),
+            'site' => array(
+                'mymod' => array(
+                    'someText'   => 'Some text',
+                    'someNumber' => '50',
+                    'someSelect' => array('Foo', 'Bar', 'Dev', 'Null'),
+                ),
             ),
         ),
     ),

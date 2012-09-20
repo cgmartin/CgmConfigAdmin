@@ -9,7 +9,7 @@
 
 namespace CgmConfigAdmin\Entity;
 
-class ConfigValue
+class ConfigValues
 {
     /**
      * @var string
@@ -19,11 +19,11 @@ class ConfigValue
     /**
      * @var string
      */
-    protected $value;
+    protected $values;
 
     /**
      * @param  string $id
-     * @return ConfigValue
+     * @return ConfigValues
      */
     public function setId($id)
     {
@@ -40,14 +40,14 @@ class ConfigValue
     }
 
     /**
-     * Sets a serialized config value
+     * Sets serialized config values
      *
-     * @param  string $value
-     * @return ConfigValue
+     * @param  string $values
+     * @return ConfigValues
      */
-    public function setValue($value)
+    public function setValues($values)
     {
-        $this->value = $value;
+        $this->value = $values;
         return $this;
     }
 
@@ -56,7 +56,7 @@ class ConfigValue
      *
      * @return string
      */
-    public function getValue()
+    public function getValues()
     {
         return $this->value;
     }

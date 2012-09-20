@@ -1,4 +1,4 @@
-CREATE TABLE `configadminvalue` (
-  `configvalue_id` varchar(255) PRIMARY KEY NOT NULL,
-  `value`          text         NOT NULL
+CREATE TABLE `configadminvalues` (
+  `configvalues_id` varchar(255) PRIMARY KEY NOT NULL,
+  `configvalues`    text         NOT NULL
 );
