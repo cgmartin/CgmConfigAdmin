@@ -11,7 +11,7 @@ namespace CgmConfigAdmin\Entity;
 
 use Zend\Stdlib\Hydrator\ClassMethods;
 
-class ConfigValueHydrator extends ClassMethods
+class ConfigValuesHydrator extends ClassMethods
 {
     /**
      * Extract values from an object
@@ -22,33 +22,35 @@ class ConfigValueHydrator extends ClassMethods
      */
     public function extract($object)
     {
-        if (!$object instanceof ConfigValue) {
+        if (!$object instanceof ConfigValues) {
             throw new Exception\InvalidArgumentException(
-                '$object must be an instance of CgmConfigAdmin\Entity\ConfigValue'
+                '$object must be an instance of CgmConfigAdmin\Entity\ConfigValues'
             );
         }
-        /* @var $object ConfigValue*/
+        /* @var $object ConfigValues*/
         $data = parent::extract($object);
-        $data = $this->mapField('id', 'configvalue_id', $data);
+        $data = $this->mapField('id',     'configvalues_id', $data);
+        $data = $this->mapField('values', 'configvalues',    $data);
         return $data;
     }
 
     /**
      * Hydrate $object with the provided $data.
      *
-     * @param  array $data
+     * @param  array  $data
      * @param  object $object
-     * @return ConfigValue
+     * @return ConfigValues
      * @throws Exception\InvalidArgumentException
      */
     public function hydrate(array $data, $object)
     {
-        if (!$object instanceof ConfigValue) {
+        if (!$object instanceof ConfigValues) {
             throw new Exception\InvalidArgumentException(
-                '$object must be an instance of CgmConfigAdmin\Entity\ConfigValue'
+                '$object must be an instance of CgmConfigAdmin\Entity\ConfigValues'
             );
         }
-        $data = $this->mapField('configvalue_id', 'id', $data);
+        $data = $this->mapField('configvalues_id', 'id',     $data);
+        $data = $this->mapField('configvalues',    'values', $data);
         return parent::hydrate($data, $object);
     }
 

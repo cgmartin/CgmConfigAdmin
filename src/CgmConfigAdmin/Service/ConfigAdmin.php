@@ -10,8 +10,8 @@ namespace CgmConfigAdmin\Service;
 
 use CgmConfigAdmin\Options\ModuleOptions;
 use CgmConfigAdmin\Form\ConfigOptionsForm;
-use CgmConfigAdmin\Entity\ConfigValue;
-use CgmConfigAdmin\Entity\ConfigValueMapperInterface;
+use CgmConfigAdmin\Entity\ConfigValues;
+use CgmConfigAdmin\Entity\ConfigValuesMapperInterface;
 use CgmConfigAdmin\Model\ConfigGroup;
 use CgmConfigAdmin\Model\ConfigOption;
 use ZfcBase\EventManager\EventProvider;
@@ -22,6 +22,16 @@ use Zend\Session\Container as SessionContainer;
 
 class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
 {
+    /**
+     * @var string
+     */
+    protected $context;
+
+    /**
+     * @var string
+     */
+    protected $userId;
+
     /**
      * @var ServiceManager
      */
@@ -38,9 +48,9 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     protected $session;
 
     /**
-     * @var ConfigValueMapperInterface
+     * @var ConfigValuesMapperInterface
      */
-    protected $configValueMapper;
+    protected $configValuesMapper;
 
     /**
      * @var array
@@ -51,6 +61,16 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
      * @var ConfigOptionsForm
      */
     protected $configOptionsForm;
+
+    /**
+     * @param string      $context Optional the config context (site, user, etc.)
+     * @param string|null $userId  Optional for per-user config values
+     */
+    public function __construct($context = 'site', $userId = null)
+    {
+        $this->context = $context;
+        $this->userId  = $userId;
+    }
 
     /**
      * @param  string $groupId  The group id, or format 'groupName\optionName'
@@ -98,7 +118,9 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
             __FUNCTION__, $this,  array('configValues' => $config)
         );
 
-        $this->getSession()->configValues = $config;
+        $contextKey = $this->getContextKey();
+
+        $this->getSession()->$contextKey = $config;
         $configGroups = $this->getConfigGroups();
         $this->applyValuesToConfigGroups($config, $configGroups);
 
@@ -114,12 +136,14 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
      */
     public function resetConfigValues()
     {
+        $contextKey = $this->getContextKey();
+
         $this->getEventManager()->trigger(
             __FUNCTION__, $this,
-            array('configValues' => $this->getSession()->configValues)
+            array('configValues' => $this->getSession()->$contextKey)
         );
 
-        unset($this->getSession()->configValues);
+        unset($this->getSession()->$contextKey);
         $this->resetConfigGroups();
 
         $this->getEventManager()->trigger(
@@ -152,11 +176,7 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
             /** @var ConfigOption $option  */
             foreach ($group->getConfigOptions() as $option) {
                 if ($option->hasValueChanged()) {
-                    $configValue = new ConfigValue();
-                    $configValue
-                        ->setId($option->getUniqueId())
-                        ->setValue(serialize($option->getValue()));
-                    $configValues[] = $configValue;
+                    $configValues[$option->getUniqueId()] = $option->getValue();
                 }
             }
         }
@@ -165,8 +185,15 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
             __FUNCTION__, $this, array('configValues' => $configValues)
         );
 
-        $this->getConfigValueMapper()->saveAll($configValues);
-        unset($this->getSession()->configValues);
+        $contextKey = $this->getContextKey();
+
+        $configValuesRow = new ConfigValues();
+        $configValuesRow
+            ->setId($contextKey)
+            ->setValues(serialize($configValues));
+
+        $this->getConfigValuesMapper()->save($configValuesRow);
+        unset($this->getSession()->$contextKey);
 
         $this->getEventManager()->trigger(
             __FUNCTION__.'.post', $this, array('configValues' => $configValues)
@@ -180,31 +207,33 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     public function getConfigGroups()
     {
         if (!$this->configGroups) {
-            $groups = $this->getServiceManager()->get('cgmconfigadmin_config_groups');
+            $factory = $this->getServiceManager()->get('cgmconfigadmin_configgroupfactory');
+            $groups  = $factory->createConfigGroups(
+                $this->getServiceManager(), $this->getOptions(), $this->context
+            );
+
+            $contextKey = $this->getContextKey();
 
             // Apply from data store
-            $dbConfigValues = $this->getConfigValueMapper()->findAll();
-            //\Zend\Debug\Debug::dump($configValues); die();
-            if ($dbConfigValues->count()) {
-                $configValues = array();
-                /** @var ConfigValue $configValue */
-                foreach ($dbConfigValues as $configValue) {
-                    $configValues[$configValue->getId()] = unserialize($configValue->getValue());
-                }
+            $configValue = $this->getConfigValuesMapper()->find($contextKey);
+            //\Zend\Debug\Debug::dump($configValue); die();
+            if (!empty($configValue)) {
+                $configValues = unserialize($configValue->getValues());
 
                 /** @var ConfigGroup $group */
                 foreach($groups as $group) {
                     /** @var ConfigOption $option  */
                     foreach ($group->getConfigOptions() as $option) {
-                        if (isset($configValues[$option->getUniqueId()])) {
-                            $option->setValue($configValues[$option->getUniqueId()]);
+                        $uniqId = $option->getUniqueId();
+                        if (isset($configValues[$uniqId])) {
+                            $option->setValue($configValues[$uniqId]);
                         }
                     }
                 }
             }
 
             // Apply from session
-            $values = $this->getSession()->configValues;
+            $values = $this->getSession()->$contextKey;
             if ($values) {
                 $this->applyValuesToConfigGroups($values, $groups);
             }
@@ -222,6 +251,18 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     {
         $this->configGroups = $groups;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getContextKey()
+    {
+        $key = $this->context;
+        if (isset($this->userId)) {
+            $key .= "-" . $this->userId;
+        }
+        return $key;
     }
 
     /**
@@ -300,23 +341,25 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     }
 
     /**
-     * @return ConfigValueMapperInterface
+     * @return ConfigValuesMapperInterface
      */
-    public function getConfigValueMapper()
+    public function getConfigValuesMapper()
     {
-        if (null === $this->configValueMapper) {
-            $this->configValueMapper = $this->getServiceManager()->get('cgmconfigadmin_configvalue_mapper');
+        if (null === $this->configValuesMapper) {
+            $this->setConfigValuesMapper(
+                $this->getServiceManager()->get('cgmconfigadmin_configvalues_mapper')
+            );
         }
-        return $this->configValueMapper;
+        return $this->configValuesMapper;
     }
 
     /**
-     * @param  ConfigValueMapperInterface $mapper
+     * @param  ConfigValuesMapperInterface $mapper
      * @return ConfigAdmin
      */
-    public function setUserMapper(ConfigValueMapperInterface $mapper)
+    public function setConfigValuesMapper(ConfigValuesMapperInterface $mapper)
     {
-        $this->configValueMapper = $mapper;
+        $this->configValuesMapper = $mapper;
         return $this;
     }
 

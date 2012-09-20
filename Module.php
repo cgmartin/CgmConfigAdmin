@@ -60,10 +60,11 @@ class Module implements
     {
         return array(
             'invokables' => array(
-                'cgmconfigadmin'              => 'CgmConfigAdmin\Service\ConfigAdmin',
-                'cgmconfigadmin_form'         => 'CgmConfigAdmin\Form\ConfigOptionsForm',
-                'cgmconfigadmin_configgroup'  => 'CgmConfigAdmin\Model\ConfigGroup',
-                'cgmconfigadmin_configoption' => 'CgmConfigAdmin\Model\ConfigOption',
+                'cgmconfigadmin'                    => 'CgmConfigAdmin\Service\ConfigAdmin',
+                'cgmconfigadmin_form'               => 'CgmConfigAdmin\Form\ConfigOptionsForm',
+                'cgmconfigadmin_configgroup'        => 'CgmConfigAdmin\Model\ConfigGroup',
+                'cgmconfigadmin_configoption'       => 'CgmConfigAdmin\Model\ConfigOption',
+                'cgmconfigadmin_configgroupfactory' => 'CgmConfigAdmin\Model\ConfigGroupFactory',
             ),
 
             'shared' => array(
@@ -86,21 +87,32 @@ class Module implements
                     return $session;
                 },
 
-                // Groups of Config Option Definitions
-                'cgmconfigadmin_config_groups' => 'CgmConfigAdmin\Model\ConfigGroupFactory',
-
                 // Data Mapper for config values
-                'cgmconfigadmin_configvalue_mapper' => function ($sm) {
+                'cgmconfigadmin_configvalues_mapper' => function ($sm) {
                     /** @var $options Options\ModuleOptions */
                     $options = $sm->get('cgmconfigadmin_module_options');
 
-                    $mapper = new Entity\ConfigValueMapper();
-                    $mapper->setTableName($options->getConfigValueTable());
+                    $mapper = new Entity\ConfigValuesMapper();
+                    $mapper->setTableName($options->getConfigValuesTable());
                     $mapper->setDbAdapter($sm->get('cgmconfigadmin_zend_db_adapter'));
-                    $mapper->setEntityPrototype(new Entity\ConfigValue);
-                    $mapper->setHydrator(new Entity\ConfigValueHydrator());
+                    $mapper->setEntityPrototype(new Entity\ConfigValues);
+                    $mapper->setHydrator(new Entity\ConfigValuesHydrator());
                     return $mapper;
                 },
+
+                // Example Per-user settings
+                // * Requires ZfcUser *
+                /*
+                'cgmconfigadmin_userconfig' => function($sm) {
+                    $authService = $sm->get('zfcuser_auth_service');
+                    $userId = null;
+                    if ($authService->hasIdentity()) {
+                        $userId = $authService->getIdentity()->getId();
+                    }
+                    $service = new Service\ConfigAdmin('user', $userId);
+                    return $service;
+                }
+                */
             ),
         );
     }

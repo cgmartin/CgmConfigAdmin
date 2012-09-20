@@ -9,11 +9,11 @@
 
 namespace CgmConfigAdmin\Entity;
 
-interface ConfigValueMapperInterface
+interface ConfigValuesMapperInterface
 {
-    public function findAll();
+    public function find($id);
 
-    public function saveAll($configValues);
+    public function save($configValues);
 
     public function setTableName($table);
 }
