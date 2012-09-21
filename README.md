@@ -1,6 +1,6 @@
 CgmConfigAdmin
 ==============
-Version 1.1.0 Created by Christopher Martin
+Version 1.1.1 Created by Christopher Martin
 
 Introduction
 ------------
@@ -10,8 +10,8 @@ Need to give clients access to website configuration settings?
 CgmConfigAdmin is a ZF2 module for managing site-wide settings via a single web page.
 
 **UPDATE:** Per-user settings is now also possible, at the expense of breaking
-API changes. If you have previously installed, see the updates in `schema.sql` and
-`cgmconfigadmin.global.php.dist`.
+API changes. If you have previously installed 1.0.0, see the updates in `schema.sql` and
+`cgmconfigadmin.global.php.dist` (steps 3 and 4 of the installation instructions).
 
 ![CgmConfigAdmin example screenshot](http://grab.by/g6Cg)
 
@@ -20,26 +20,50 @@ Settings are exposed to the administration panel via a simple configuration form
 Module authors can also easily include their own specific configuration settings right
 from their module.config.php file.
 
+Release Notes
+-------------
+
+**1.1.1**:
+
+* Fix: Autoload classmap updated for 1.1.0.
+* Feature: Ability to disable preview mode for a config context.
+
+**1.1.0**:
+
+* Per-user configuration settings, causing API changes to the config format.
+* Feature: Configurations can now be grouped into any type of context
+  (ie. site-wide, per user, per group, etc.), not just per-user.
+  See example in Module.php.
+* Feature: Simplified schema so that key-value stores or transactionless
+  databases can be used. (Schema changes)
+
+**1.0.0**:
+
+* First release, site-wide configuration settings.
+* Feature: Settings can be easily configured for a particular Form input type
+  (Radio, Select, MultiCheckbox, Text, Range, etc.).
+* Feature: Preview settings in the administrator's browser before publishing.
+* Feature: Twitter Bootstrap v2 UI classes.
+* Feature: Multiple rendering options for the settings form. Two view helpers
+  included (Fieldsets and Accordian).
+
+TODO
+----
+* More form input type options (Range, Date, Time, etc.).
+* New view helper option: Tabbed settings form.
+* Better docs and examples for per-user settings.
+* View Helper to alert when in Preview Mode.
+* Integration with [ZfcAdmin](https://github.com/ZF-Commons/RFC/wiki/RFC:-ZfcAdmin).
+* Tooltips on form inputs.
+* Doctrine support.
+* Table of Contents view helper with Scrollspy for long pages of settings.
+
 Requirements
 ------------
 
 * [Zend Framework 2](https://github.com/zendframework/zf2) (latest master)
 * [ZfcBase](https://github.com/ZF-Commons/ZfcBase) (latest master)
 * A Database or Key/Value store
-
-Features / Goals
-----------------
-* Settings can be easily configured for a particular Form input type
-  (Radio, Select, MultiCheckbox, Text, Range, etc.)
-* Preview settings in the administrator's browser before publishing.
-* Multiple rendering options for the settings form. Two included form view helpers: Fieldsets and Accordian
-* Twitter Bootstrap v2 UI classes
-* Per-user settings support, see example in Module.php [Complete, but needs better docs]
-* View Helper to alert when in Preview Mode [INCOMPLETE]
-* Integration with [ZfcAdmin](https://github.com/ZF-Commons/RFC/wiki/RFC:-ZfcAdmin) [INCOMPLETE]
-* Tooltips for extra help/descriptions [INCOMPLETE]
-* Doctrine support [INCOMPLETE]
-* Table of Contents view helper with Scrollspy (for long pages of settings) [INCOMPLETE]
 
 Installation
 ------------
