@@ -63,6 +63,11 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     protected $configOptionsForm;
 
     /**
+     * @var bool
+     */
+    protected $isPreviewEnabled = true;
+
+    /**
      * @param string      $context Optional the config context (site, user, etc.)
      * @param string|null $userId  Optional for per-user config values
      */
@@ -301,7 +306,9 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     public function getConfigOptionsForm()
     {
         if (!$this->configOptionsForm) {
+            /** @var ConfigOptionsForm $form */
             $form = $this->getServiceManager()->get('cgmconfigadmin_form');
+            $form->setIsPreviewEnabled($this->isPreviewEnabled());
             $form->addConfigGroups($this->getConfigGroups());
             $this->setConfigOptionsForm($form);
         }
@@ -406,6 +413,24 @@ class ConfigAdmin extends EventProvider implements ServiceManagerAwareInterface
     public function setServiceManager(ServiceManager $serviceManager)
     {
         $this->serviceManager = $serviceManager;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPreviewEnabled()
+    {
+        return $this->isPreviewEnabled;
+    }
+
+    /**
+     * @param  boolean $locator
+     * @return ConfigAdmin
+     */
+    public function setIsPreviewEnabled($enabled)
+    {
+        $this->isPreviewEnabled = $enabled;
         return $this;
     }
 }

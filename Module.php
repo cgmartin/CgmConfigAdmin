@@ -110,6 +110,7 @@ class Module implements
                         $userId = $authService->getIdentity()->getId();
                     }
                     $service = new Service\ConfigAdmin('user', $userId);
+                    $service->setIsPreviewEnabled(false); // To disable settings preview
                     return $service;
                 }
                 */
