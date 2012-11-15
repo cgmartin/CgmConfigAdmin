@@ -24,8 +24,7 @@ class ConfigValuesMapper extends AbstractDbMapper implements ConfigValuesMapperI
     public function find($id)
     {
         $select = $this->getSelect()
-            ->where(array('configvalues_id' => $id))
-            ->from($this->tableName);
+            ->where(array('configvalues_id' => $id));
 
         $resultSet = $this->select($select);
 
