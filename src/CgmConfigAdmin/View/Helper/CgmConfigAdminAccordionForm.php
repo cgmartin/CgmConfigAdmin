@@ -20,8 +20,9 @@ use Zend\Form\Element\MultiCheckbox as MultiCheckboxElement;
 class CgmConfigAdminAccordionForm extends AbstractHelper
 {
     /**
-     * @param  ConfigOptions $form
-     * @return string
+     * @param \CgmConfigAdmin\Form\ConfigOptionsForm $form
+     *
+     * @return CgmConfigAdminAccordionForm|string
      */
     public function __invoke(ConfigOptionsForm $form = null)
     {
