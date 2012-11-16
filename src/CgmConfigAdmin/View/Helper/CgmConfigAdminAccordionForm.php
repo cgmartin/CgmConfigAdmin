@@ -20,8 +20,7 @@ use Zend\Form\Element\MultiCheckbox as MultiCheckboxElement;
 class CgmConfigAdminAccordionForm extends AbstractHelper
 {
     /**
-     * @param \CgmConfigAdmin\Form\ConfigOptionsForm $form
-     *
+     * @param  ConfigOptionsForm $form
      * @return CgmConfigAdminAccordionForm|string
      */
     public function __invoke(ConfigOptionsForm $form = null)
@@ -33,6 +32,10 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
         return $this->render($form);
     }
 
+    /**
+     * @param  ConfigOptionsForm $form
+     * @return string
+     */
     public function render(ConfigOptionsForm $form)
     {
         $formHelper    = $this->view->plugin('form');
@@ -73,11 +76,18 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
         return $output;
     }
 
+    /**
+     * @return string
+     */
     public function renderHeader()
     {
         return '<div class="accordion">';
     }
 
+    /**
+     * @param  FieldsetInterface $fieldset
+     * @return string
+     */
     public function renderSectionHeader(FieldsetInterface $fieldset)
     {
         $escapeHelper    = $this->view->plugin('escapehtml');
@@ -93,6 +103,10 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
         return $output;
     }
 
+    /**
+     * @param  ElementInterface $element
+     * @return string
+     */
     public function renderConfigOption(ElementInterface $element)
     {
         $labelHelper   = $this->view->plugin('formlabel');
@@ -119,17 +133,27 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
         return $output;
     }
 
-
+    /**
+     * @param  FieldsetInterface $fieldset
+     * @return string
+     */
     public function renderSectionFooter(FieldsetInterface $fieldset)
     {
         return '</div></div></div>';
     }
 
+    /**
+     * @return string
+     */
     public function renderFooter()
     {
         return '</div>';
     }
 
+    /**
+     * @param  ConfigOptionsForm $form
+     * @return string
+     */
     public function renderButtons(ConfigOptionsForm $form)
     {
         $elementHelper   = $this->view->plugin('formelement');

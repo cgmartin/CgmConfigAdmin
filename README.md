@@ -23,6 +23,11 @@ from their module.config.php file.
 Release Notes
 -------------
 
+**1.1.2**:
+
+* Fix: Update for ZfcBase AbstractDbMapper changes (@Celtico)
+* Feature: Added Password input type (@Celtico)
+
 **1.1.1**:
 
 * Fix: Autoload classmap updated for 1.1.0.
