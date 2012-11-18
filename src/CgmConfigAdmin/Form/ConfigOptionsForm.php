@@ -28,7 +28,8 @@ class ConfigOptionsForm extends ProvidesEventsForm
         'multicheckbox' => 'Zend\Form\Element\MultiCheckbox',
         'text'          => 'Zend\Form\Element\Text',
         'number'        => 'Zend\Form\Element\Number',
-        'password'        => 'Zend\Form\Element\Password',
+        'password'      => 'Zend\Form\Element\Password',
+        'textarea'      => 'Zend\Form\Element\Textarea',
     );
 
     /**
