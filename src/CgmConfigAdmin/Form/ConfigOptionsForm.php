@@ -29,6 +29,7 @@ class ConfigOptionsForm extends ProvidesEventsForm
         'text'          => 'Zend\Form\Element\Text',
         'number'        => 'Zend\Form\Element\Number',
         'password'      => 'Zend\Form\Element\Password',
+        'textarea'      => 'Zend\Form\Element\Textarea',
     );
 
     /**
