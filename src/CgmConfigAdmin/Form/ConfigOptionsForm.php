@@ -13,6 +13,7 @@ use ZfcBase\Form\ProvidesEventsForm;
 use CgmConfigAdmin\Model\ConfigGroup;
 use CgmConfigAdmin\Model\ConfigOption;
 use Zend\InputFilter\InputFilter;
+use Zend\InputFilter\InputProviderInterface;
 use Zend\Form\Element\Csrf as CsrfElement;
 use Zend\Form\Element\Button as ButtonElement;
 use Zend\Validator\Explode as ExplodeValidator;
@@ -23,13 +24,22 @@ class ConfigOptionsForm extends ProvidesEventsForm
 {
     // Maps config option types to elements
     protected static $elementMappings = array(
-        'radio'         => 'Zend\Form\Element\Radio',
-        'select'        => 'Zend\Form\Element\Select',
+        'color'         => 'Zend\Form\Element\Color',
+        'date'          => 'Zend\Form\Element\Date',
+        'datetimelocal' => 'Zend\Form\Element\DateTimeLocal',
+        'email'         => 'Zend\Form\Element\Email',
+        'month'         => 'Zend\Form\Element\Month',
         'multicheckbox' => 'Zend\Form\Element\MultiCheckbox',
-        'text'          => 'Zend\Form\Element\Text',
         'number'        => 'Zend\Form\Element\Number',
-        'password'      => 'Zend\Form\Element\Password',
+        //'password'      => 'Zend\Form\Element\Password', // TODO
+        'radio'         => 'Zend\Form\Element\Radio',
+        'range'         => 'Zend\Form\Element\Range',
+        'select'        => 'Zend\Form\Element\Select',
+        'text'          => 'Zend\Form\Element\Text',
         'textarea'      => 'Zend\Form\Element\Textarea',
+        'time'          => 'Zend\Form\Element\Time',
+        'url'           => 'Zend\Form\Element\Url',
+        'week'          => 'Zend\Form\Element\Week',
     );
 
     /**
@@ -202,7 +212,9 @@ class ConfigOptionsForm extends ProvidesEventsForm
         );
 
         foreach ($configGroup->getConfigOptions() as $id => $configOption) {
-            $inputFilters[$id] = $this->createConfigOptionInputFilterSpec($configOption);
+            $inputFilters[$id] = $this->createConfigOptionInputFilterSpec(
+                $configOption, $configGroup->getId()
+            );
         }
         return $inputFilters;
     }
@@ -213,70 +225,20 @@ class ConfigOptionsForm extends ProvidesEventsForm
      * @param  ConfigOption $configOption
      * @return array
      */
-    protected function createConfigOptionInputFilterSpec(ConfigOption $configOption)
+    protected function createConfigOptionInputFilterSpec(ConfigOption $configOption, $groupId)
     {
-        $inputSpec = array();
+        $element = $this->get($groupId)->get($configOption->getId());
+        if ($element instanceof InputProviderInterface) {
+            $inputSpec = $element->getInputSpecification();
+        } else {
+            $inputSpec = array();
+            $inputSpec['name'] = $configOption->getId();
+        }
 
-        $type = $configOption->getInputType();
-
-        $inputSpec['name']        = $configOption->getId();
         $inputSpec['required']    = $configOption->getRequired();
         $inputSpec['allow_empty'] = ! $configOption->getRequired();
 
-        $validators = array();
-        $filters    = array();
-        switch ($type) {
-            case 'radio':
-            case 'select':
-                $validators[] = $this->getInArrayValidator($configOption, false);
-                break;
-            case 'multicheckbox':
-                $validators[] = $this->getExplodeValidator($configOption, true);
-                break;
-            //case 'text':
-            case 'number':
-                $filters[]    = array('name' => 'Zend\Filter\StringTrim');
-                $validators[] = array(
-                    'name'    => 'float',
-                    'options' => array('locale' => 'en_US'),
-                );
-                break;
-        }
-        if (!empty($filters)) {
-            $inputSpec['filters'] = $filters;
-        }
-        if (!empty($validators)) {
-            $inputSpec['validators'] = $validators;
-        }
-
         return $inputSpec;
-    }
-
-    /**
-     * @param  ConfigOption $configOption
-     * @param  bool         $includeEmpty
-     * @return InArrayValidator
-     */
-    public function getInArrayValidator(ConfigOption $configOption, $includeEmpty = false)
-    {
-        $inarray = $this->getValidatorPluginManager()->create('inarray');
-        $inarray->setHaystack($configOption->getValueOptionValues($includeEmpty));
-        return $inarray;
-    }
-
-    /**
-     * @param  ConfigOption $configOption
-     * @param  bool         $includeEmpty
-     * @return ExplodeValidator
-     */
-    public function getExplodeValidator(ConfigOption $configOption, $includeEmpty = false)
-    {
-        $explode = $this->getValidatorPluginManager()->create('explode');
-        $explode
-            ->setValidator($this->getInArrayValidator($configOption, $includeEmpty))
-            ->setValueDelimiter(null); // skip explode if only one value
-
-        return $explode;
     }
 
     /**
