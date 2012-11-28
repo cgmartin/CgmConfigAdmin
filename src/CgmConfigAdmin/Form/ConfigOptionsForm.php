@@ -31,7 +31,7 @@ class ConfigOptionsForm extends ProvidesEventsForm
         'month'         => 'Zend\Form\Element\Month',
         'multicheckbox' => 'Zend\Form\Element\MultiCheckbox',
         'number'        => 'Zend\Form\Element\Number',
-        //'password'      => 'Zend\Form\Element\Password', // TODO
+        'password'      => 'Zend\Form\Element\Password',
         'radio'         => 'Zend\Form\Element\Radio',
         'range'         => 'Zend\Form\Element\Range',
         'select'        => 'Zend\Form\Element\Select',

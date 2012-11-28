@@ -1,6 +1,6 @@
 CgmConfigAdmin
 ==============
-Version 1.1.2 Created by Christopher Martin
+Version 1.1.3 Created by Christopher Martin
 
 Introduction
 ------------
@@ -23,15 +23,23 @@ from their module.config.php file.
 Release Notes
 -------------
 
+**1.1.3**:
+
+* Feature: Added Textarea input type (@Celtico)
+* Feature: Added input types: Color, Date, DateTimeLocal, Email, Month
+  Range, Time, Url, and Week.
+* Fix: Default filters and validators are now being added from
+  element's getInputSpecification(), if it exists.
+
 **1.1.2**:
 
-* Fix: Update for ZfcBase AbstractDbMapper changes (@Celtico)
 * Feature: Added Password input type (@Celtico)
+* Fix: Update for ZfcBase AbstractDbMapper changes (@Celtico)
 
 **1.1.1**:
 
-* Fix: Autoload classmap updated for 1.1.0.
 * Feature: Ability to disable preview mode for a config context.
+* Fix: Autoload classmap updated for 1.1.0.
 
 **1.1.0**:
 
