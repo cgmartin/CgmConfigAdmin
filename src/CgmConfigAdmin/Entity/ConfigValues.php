@@ -19,7 +19,7 @@ class ConfigValues
     /**
      * @var string
      */
-    protected $values;
+    protected $value;
 
     /**
      * @param  string $id
