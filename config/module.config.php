@@ -7,17 +7,28 @@ return array(
     ),
     'router' => array(
         'routes' => array(
-            'cgmconfigadmin' => array(
-                'type' => 'Literal',
-                'priority' => 1000,
-                'options' => array(
-                    'route' => '/config-admin',
-                    'defaults' => array(
-                        'controller' => 'CgmConfigAdmin_ConfigOptionsController',
-                        'action'     => 'index',
+            'zfcadmin' => array(
+                'child_routes' => array(
+                    'cgmconfigadmin' => array(
+                        'type' => 'Literal',
+                        'priority' => 1000,
+                        'options' => array(
+                            'route' => '/config',
+                            'defaults' => array(
+                                'controller' => 'CgmConfigAdmin_ConfigOptionsController',
+                                'action' => 'index',
+                            ),
+                        ),
                     ),
                 ),
-                'may_terminate' => true,
+            ),
+        ),
+    ),
+    'navigation' => array(
+        'admin' => array(
+            'cgmconfigadmin' => array(
+                'label' => 'Config',
+                'route' => 'zfcadmin/cgmconfigadmin',
             ),
         ),
     ),
@@ -29,7 +40,7 @@ return array(
     'view_helpers' => array(
         'invokables' => array(
             'cgmconfigadminaccordionform' => 'CgmConfigAdmin\View\Helper\CgmConfigAdminAccordionForm',
-            'cgmconfigadminfieldsetform'  => 'CgmConfigAdmin\View\Helper\CgmConfigAdminFieldsetForm',
+            'cgmconfigadminfieldsetform' => 'CgmConfigAdmin\View\Helper\CgmConfigAdminFieldsetForm',
         ),
     ),
 );
