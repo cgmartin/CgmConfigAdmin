@@ -1,6 +1,6 @@
 CgmConfigAdmin
 ==============
-Version 1.1.3 Created by Christopher Martin
+Version 1.2.0 Created by Christopher Martin
 
 Introduction
 ------------
