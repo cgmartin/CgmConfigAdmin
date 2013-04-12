@@ -9,10 +9,6 @@ Need to give clients access to website configuration settings?
 
 CgmConfigAdmin is a ZF2 module for managing site-wide settings via a single web page.
 
-**UPDATE:** Per-user settings is now also possible, at the expense of breaking
-API changes. If you have previously installed 1.0.0, see the updates in `schema.sql` and
-`cgmconfigadmin.global.php.dist` (steps 3 and 4 of the installation instructions).
-
 ![CgmConfigAdmin example screenshot](http://grab.by/g6Cg)
 
 Settings are exposed to the administration panel via a simple configuration format.
@@ -20,6 +16,9 @@ Settings are exposed to the administration panel via a simple configuration form
 Module authors can also easily include their own specific configuration settings right
 from their module.config.php file.
 
+### UPDATES IN 1.2.0
+
+Please see [CHANGELOG.md](CHANGELOG.md).
 
 Requirements
 ------------
