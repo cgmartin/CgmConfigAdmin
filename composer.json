@@ -23,7 +23,9 @@
     },
     "suggest": {
         "bjyoungblood/bjy-authorize": ">=1.1.1",
-        "zf-commons/zfc-user": ">=0.0.1"
+        "zf-commons/zfc-rbac": ">=0.1.1",
+        "zf-commons/zfc-user": ">=0.0.1",
+        "zf-commons/zfc-admin": ">=0.1.0"
     },
     "autoload": {
         "psr-0": {

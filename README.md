@@ -50,6 +50,7 @@ Please provide a version constraint for the cgm/config-admin requirement: dev-ma
 ### Post-Install
 
 Protect the `/config-admin` route with an authorization module, such as
+[ZfcRbac](https://github.com/ZF-Commons/ZfcRbac) or
 [BjyAuthorize](https://github.com/bjyoungblood/BjyAuthorize). The route can
 be changed in the `./config/autoload/cgmconfigadmin.global.php` file.
 
