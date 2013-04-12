@@ -61,7 +61,7 @@ class ConfigOptionsController extends AbstractActionController
                 $this->flashMessenger()
                     ->setNamespace('cgmconfigadmin')
                     ->addMessage($message);
-                return $this->redirect()->toRoute('cgmconfigadmin');
+                return $this->redirect()->toRoute($this->getRoute());
             }
         }
         return array(
@@ -90,4 +90,16 @@ class ConfigOptionsController extends AbstractActionController
         return $this;
     }
 
+    /**
+     * Get index action route based on routes config - can be either standalone or ZfcAdmin child.
+     *
+     * @return string
+     */
+    protected function getRoute()
+    {
+        $config = $this->getServiceLocator()->get('Config');
+        $route = 'cgmconfigadmin';
+        if (isset($config['router']['routes']['zfcadmin']['child_routes']['cgmconfigadmin'])) $route = 'zfcadmin/' . $route;
+        return $route;
+    }
 }
