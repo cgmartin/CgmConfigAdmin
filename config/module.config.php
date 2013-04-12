@@ -13,7 +13,7 @@ return array(
     'view_helpers' => array(
         'invokables' => array(
             'cgmconfigadminaccordionform' => 'CgmConfigAdmin\View\Helper\CgmConfigAdminAccordionForm',
-            'cgmconfigadminfieldsetform'  => 'CgmConfigAdmin\View\Helper\CgmConfigAdminFieldsetForm',
+            'cgmconfigadminfieldsetform' => 'CgmConfigAdmin\View\Helper\CgmConfigAdminFieldsetForm',
         ),
     ),
 );

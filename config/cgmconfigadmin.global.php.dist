@@ -101,5 +101,53 @@ return array(
         ),
     ),
 
+    // Route configuration
+    'router' => array(
+        'routes' => array(
+            'cgmconfigadmin' => array(
+                'type' => 'Literal',
+                'priority' => 1000,
+                'options' => array(
+                    'route' => '/config-admin',
+                    'defaults' => array(
+                        'controller' => 'CgmConfigAdmin_ConfigOptionsController',
+                        'action'     => 'index',
+                    ),
+                ),
+                'may_terminate' => true,
+            ),
+        ),
+    ),
+
+    // ZfcAdmin integration example
+    /*
+    'router' => array(
+        'routes' => array(
+            'zfcadmin' => array(
+                'child_routes' => array(
+                    'cgmconfigadmin' => array(
+                        'type' => 'Literal',
+                        'priority' => 1000,
+                        'options' => array(
+                            'route' => '/config',
+                            'defaults' => array(
+                                'controller' => 'CgmConfigAdmin_ConfigOptionsController',
+                                'action' => 'index',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    ),
+    'navigation' => array(
+        'admin' => array(
+            'cgmconfigadmin' => array(
+                'label' => 'Config',
+                'route' => 'zfcadmin/cgmconfigadmin',
+            ),
+        ),
+    ),
+    */
 );
 
