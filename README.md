@@ -20,62 +20,12 @@ Settings are exposed to the administration panel via a simple configuration form
 Module authors can also easily include their own specific configuration settings right
 from their module.config.php file.
 
-Release Notes
--------------
-
-**1.1.3**:
-
-* Feature: Added Textarea input type (@Celtico)
-* Feature: Added input types: Color, Date, DateTimeLocal, Email, Month
-  Range, Time, Url, and Week.
-* Fix: Default filters and validators are now being added from
-  element's getInputSpecification(), if it exists.
-
-**1.1.2**:
-
-* Feature: Added Password input type (@Celtico)
-* Fix: Update for ZfcBase AbstractDbMapper changes (@Celtico)
-
-**1.1.1**:
-
-* Feature: Ability to disable preview mode for a config context.
-* Fix: Autoload classmap updated for 1.1.0.
-
-**1.1.0**:
-
-* Per-user configuration settings, causing API changes to the config format.
-* Feature: Configurations can now be grouped into any type of context
-  (ie. site-wide, per user, per group, etc.), not just per-user.
-  See example in Module.php.
-* Feature: Simplified schema so that key-value stores or transactionless
-  databases can be used. (Schema changes)
-
-**1.0.0**:
-
-* First release, site-wide configuration settings.
-* Feature: Settings can be easily configured for a particular Form input type
-  (Radio, Select, MultiCheckbox, Text, Range, etc.).
-* Feature: Preview settings in the administrator's browser before publishing.
-* Feature: Twitter Bootstrap v2 UI classes.
-* Feature: Multiple rendering options for the settings form. Two view helpers
-  included (Fieldsets and Accordian).
-
-TODO
-----
-* More form input type options (Range, Date, Time, etc.).
-* New view helper option: Tabbed settings form.
-* Better docs and examples for per-user settings.
-* View Helper to alert when in Preview Mode.
-* Integration with [ZfcAdmin](https://github.com/ZF-Commons/RFC/wiki/RFC:-ZfcAdmin).
-* Tooltips on form inputs.
-* Doctrine support.
-* Table of Contents view helper with Scrollspy for long pages of settings.
 
 Requirements
 ------------
 
-* [Zend Framework 2](https://github.com/zendframework/zf2) (latest master)
-* [ZfcBase](https://github.com/ZF-Commons/ZfcBase) (latest master)
+* [Zend Framework 2](https://github.com/zendframework/zf2)
+* [ZfcBase](https://github.com/ZF-Commons/ZfcBase)
 * A Database or Key/Value store
 
 Installation
@@ -101,7 +51,8 @@ Please provide a version constraint for the cgm/config-admin requirement: dev-ma
 ### Post-Install
 
 Protect the `/config-admin` route with an authorization module, such as
-[BjyAuthorize](https://github.com/bjyoungblood/BjyAuthorize).
+[BjyAuthorize](https://github.com/bjyoungblood/BjyAuthorize). The route can
+be changed in the `./config/autoload/cgmconfigadmin.global.php` file.
 
 ### Database Adapter Configuration
 

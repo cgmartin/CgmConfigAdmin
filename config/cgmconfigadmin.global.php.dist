@@ -100,5 +100,6 @@ return array(
             'cgmconfigadmin_zend_db_adapter' => (isset($settings['zend_db_adapter'])) ? $settings['zend_db_adapter']: 'Zend\Db\Adapter\Adapter',
         ),
     ),
+
 );
 
