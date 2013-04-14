@@ -1,9 +1,13 @@
 CHANGELOG
 =========
+**1.2.1**:
+
+* Fix: Removed named route from the form save redirect, so that any named route
+  can be used. Was interfering with child route configurations.
 
 **1.2.0**:
 
-* Fix: Moved default `cgmconfigadmin` route out of module.config.php and into
+* Fix: (Breaking Change) Moved default `cgmconfigadmin` route out of module.config.php and into
   cgmconfigadmin.global.php.dist to allow for easier route customization.
   In the case where the `cgmconfigadmin` route may be needed as a child route elsewhere,
   removing routes via overridden configurations is (currently) not straightforward:

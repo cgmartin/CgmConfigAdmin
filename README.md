@@ -1,6 +1,6 @@
 CgmConfigAdmin
 ==============
-Version 1.2.0 Created by Christopher Martin
+Version 1.2.1 Created by Christopher Martin
 
 Introduction
 ------------
@@ -16,7 +16,7 @@ Settings are exposed to the administration panel via a simple configuration form
 Module authors can also easily include their own specific configuration settings right
 from their module.config.php file.
 
-### UPDATES IN 1.2.0
+### UPDATES IN 1.2.1
 
 Please see [CHANGELOG.md](CHANGELOG.md).
 
