@@ -61,7 +61,7 @@ class ConfigOptionsController extends AbstractActionController
                 $this->flashMessenger()
                     ->setNamespace('cgmconfigadmin')
                     ->addMessage($message);
-                return $this->redirect()->toRoute('cgmconfigadmin');
+                return $this->redirect()->toRoute();
             }
         }
         return array(
