@@ -1,5 +1,8 @@
 CgmConfigAdmin
 ==============
+
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 Version 1.2.1 Created by Christopher Martin
 
 Introduction
