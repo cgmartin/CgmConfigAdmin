@@ -11,7 +11,6 @@ namespace CgmConfigAdmin\View\Helper;
 
 use CgmConfigAdmin\Form\ConfigOptionsForm;
 use Zend\View\Helper\AbstractHelper;
-use Zend\InputFilter\InputFilter;
 use Zend\Form\FieldsetInterface;
 use Zend\Form\ElementInterface;
 use Zend\Form\Element\Radio as RadioElement;
@@ -46,9 +45,7 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
             ->setMessageSeparatorString('</div><div class="help-block">')
             ->setMessageCloseString('</div>');
 
-        $output = $this->renderHeader();
-
-        $output .= $formHelper()->openTag($form);
+        $output  = $formHelper()->openTag($form);
         $output .= $elementHelper($form->get('csrf'));
         $output .= $errorsHelper($form->get('csrf'));
 
@@ -70,18 +67,7 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
         $output .= $this->renderButtons($form);
         $output .= $formHelper()->closeTag();
 
-        $output .= $this->renderFooter();
-
-
         return $output;
-    }
-
-    /**
-     * @return string
-     */
-    public function renderHeader()
-    {
-        return '<div class="accordion">';
     }
 
     /**
@@ -92,13 +78,15 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
     {
         $escapeHelper    = $this->view->plugin('escapehtml');
         $translateHelper = $this->view->plugin('translate');
+        $id =  $fieldset->getName();
 
-        $output  = '<div class="accordion-group" id="' . $fieldset->getName() . '">';
-        $output .= '<div class="accordion-heading">';
-        $output .= '<a href="#" class="accordion-toggle" data-toggle="collapse">';
+        $output  = '<div class="panel panel-default">';
+        $output .= '<div class="panel-heading" role="tab" id="heading'.$id.'">';
+        $output .= '<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse'.$id.'" aria-expanded="true">';
         $output .= $escapeHelper($translateHelper($fieldset->getLabel()));
-        $output .= '</a></div>';
-        $output .= '<div class="accordion-body collapse in"><div class="accordion-inner">';
+        $output .= '</a></h4></div>';
+        $output .= '<div id="collapse'.$id.'" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading'.$id.'">';
+        $output .= '<div class="panel-body"><div class="col-md-12">';
 
         return $output;
     }
@@ -116,9 +104,10 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
         $errors = $element->getMessages();
         $errorClass = (!empty($errors)) ? ' error' : '';
 
-        $output = '<div class="control-group' . $errorClass . '">';
-        $output .= $labelHelper($element->setLabelAttributes(array('class' => 'control-label')));
-        $output .= '<div class="controls">';
+        $output = '<div class="form-group' . $errorClass . '">';
+        $output .= $labelHelper($element);
+
+        $element->setAttributes(array('class' => 'form-control'));
 
         $labelAttributes = array();
         if ($element instanceof RadioElement) {
@@ -128,7 +117,7 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
         }
         $output .= $elementHelper($element->setLabelAttributes($labelAttributes));
         $output .= $errorsHelper($element);
-        $output .= '</div></div>';
+        $output .= '</div>';
 
         return $output;
     }
@@ -139,15 +128,7 @@ class CgmConfigAdminAccordionForm extends AbstractHelper
      */
     public function renderSectionFooter(FieldsetInterface $fieldset)
     {
-        return '</div></div></div>';
-    }
-
-    /**
-     * @return string
-     */
-    public function renderFooter()
-    {
-        return '</div>';
+        return '</div></div></div></div>';
     }
 
     /**
